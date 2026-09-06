@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmDirect | Direct Agricultural Marketplace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="parallax-bg" id="parallaxBg"></div>
+
+    <!-- Navigation Header -->
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">🌾 FarmDirect</a>
+            
+            <nav class="nav-links">
+                <a href="index.html#marketplace">Marketplace</a>
+                <a href="index.html#farmer-guide">Guide</a>
+
+                <!-- Header Search Bar -->
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="headerSearchInput" placeholder="Search crops, fruits, dairy..." onkeyup="searchProducts(this.value)">
+                </div>
+                
+                <!-- Auth Buttons -->
+                <div class="auth-group">
+                    <a href="login.html?mode=login" class="btn-auth btn-login">Log In</a>
+                    <a href="login.html?mode=signup" class="btn-auth btn-signup">Sign Up</a>
+                </div>
+
+                <button class="cart-btn" onclick="window.location.href='cart.html'">🛒 Cart (<span id="cart-count">0</span>)</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 3D Hero Parallax Section -->
+    <section class="hero-parallax">
+        <div class="hero-content" id="heroContent">
+            <h1>Direct Agricultural Marketplace</h1>
+            <p>Buy & sell fresh crops, vegetables, fruits, dairy, livestock, and machinery directly with zero middleman fees.</p>
+            <div class="hero-actions">
+                <a href="#marketplace" class="btn-hero primary">Browse Featured Produce</a>
+                <a href="#farmer-guide" class="btn-hero secondary">Trading Directory</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Farmer Trade Directory -->
+    <section class="farmer-guide-section" id="farmer-guide">
+        <div class="guide-container">
+            <h2 class="section-title">Farmer's Trading Directory</h2>
+            <p class="section-subtitle">Everything you can list for sale or purchase directly on FarmDirect</p>
+
+            <div class="guide-grid">
+                <!-- Things to Sell -->
+                <div class="guide-card sell-card">
+                    <div class="guide-header">
+                        <span class="guide-icon">🚜</span>
+                        <h3>What Farmers Can Sell</h3>
+                    </div>
+                    <ul class="guide-list">
+                        <li><strong>🌾 Grains & Feed:</strong> Rice, Wheat, Bajra, Corn, Sugarcane, Hay.</li>
+                        <li><strong>🥦 Fresh Veggies:</strong> Tomato, Potato, Onion, Cabbage, Brinjal, Ladyfinger.</li>
+                        <li><strong>🍎 Fresh Fruits:</strong> Banana, Apple, Grapes, Strawberry.</li>
+                        <li><strong>🥛 Dairy & Meat:</strong> Milk, Eggs, Fresh Chicken & Meat products.</li>
+                    </ul>
+                </div>
+
+                <!-- Things to Buy -->
+                <div class="guide-card buy-card">
+                    <div class="guide-header">
+                        <span class="guide-icon">🛒</span>
+                        <h3>What Farmers Can Buy</h3>
+                    </div>
+                    <ul class="guide-list">
+                        <li><strong>🌱 Seeds & Saplings:</strong> Crop hybrid seeds and vegetable saplings.</li>
+                        <li><strong>🧪 Fertilizers:</strong> Bio-fertilizers and organic pest controls.</li>
+                        <li><strong>🌾 Feed & Hay:</strong> High-protein grain mixes and dry hay bales.</li>
+                        <li><strong>🚜 Machinery:</strong> Tractors, plows, tillers, and irrigation units.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Symmetrical Marketplace Container -->
+    <div class="container" id="marketplace">
+        <aside class="sidebar">
+            <div class="card">
+                <h3>Filter Marketplace</h3>
+                <div class="filter-group">
+                    <label for="category-filter">Category</label>
+                    <select id="category-filter" onchange="filterProducts()">
+                        <option value="all">All Items</option>
+                        <option value="Grains & Feed">Grains, Feed & Hay</option>
+                        <option value="Vegetables">Fresh Vegetables</option>
+                        <option value="Fruits">Fresh Fruits</option>
+                        <option value="Dairy & Meat">Dairy & Animal Products</option>
+                        <option value="Equipment">Tools & Machinery</option>
+                    </select>
+                </div>
+            </div>
+        </aside>
+
+        <main>
+            <div class="marketplace-header">
+                <h3>Featured Listings</h3>
+                <span id="resultsCount" class="results-count">Showing 8 Featured Items</span>
+            </div>
+            <!-- Standardized Symmetrical Grid -->
+            <div class="products-grid" id="productGrid"></div>
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 FarmDirect. Empowering Agriculture with Direct Peer-to-Peer Trading.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderMarketplace === 'function') {
+                renderMarketplace();
+            }
+        });
+    </script>
+</body>
+</html>

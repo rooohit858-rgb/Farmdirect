@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart & Checkout | FarmDirect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">🌾 FarmDirect</a>
+            <nav class="nav-links">
+                <a href="index.html#marketplace">Back to Marketplace</a>
+                <div class="auth-group">
+                    <a href="login.html?mode=login" class="btn-auth btn-login">Log In</a>
+                    <a href="login.html?mode=signup" class="btn-auth btn-signup">Sign Up</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="cart-page-container">
+        <h2 class="section-title" style="text-align: left;">🛒 Shopping Cart & Checkout</h2>
+        
+        <div class="cart-layout">
+            <!-- Left: Cart Items List -->
+            <div class="cart-items-section">
+                <h3>Added Produce (<span id="cart-item-count">0</span>)</h3>
+                <div id="cart-list" class="cart-list">
+                    <!-- Dynamic Cart Items injected here -->
+                </div>
+            </div>
+
+            <!-- Right: Order Summary & Payment Options -->
+            <div class="cart-summary-section">
+                <div class="card">
+                    <h3>Order Summary</h3>
+                    
+                    <div class="summary-row">
+                        <span>Items Subtotal:</span>
+                        <strong id="cart-subtotal">₹0</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Estimated Delivery Time:</span>
+                        <strong id="cart-delivery-time">2-4 Business Days</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Agricultural Freight Fee:</span>
+                        <strong>₹150</strong>
+                    </div>
+                    <hr class="divider">
+                    <div class="summary-row total-row">
+                        <span>Grand Total:</span>
+                        <strong id="cart-grand-total">₹150</strong>
+                    </div>
+
+                    <!-- Payment Mode Selection -->
+                    <div class="payment-section">
+                        <h4>Select Payment Method</h4>
+                        <div class="payment-options">
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="upi" checked>
+                                <span>📱 Online UPI (GPay / PhonePe / Paytm)</span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="card">
+                                <span>💳 Credit Card / Debit Card</span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="cod">
+                                <span>💵 Cash on Delivery (COD)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn-submit" style="width: 100%; margin-top: 1rem;" onclick="processOrder()">Confirm & Place Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 FarmDirect. Empowering Agriculture with Direct Peer-to-Peer Trading.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderCartPage === 'function') {
+                renderCartPage();
+            }
+        });
+    </script>
+</body>
+</html>

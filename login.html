@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Authentication | FarmDirect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page-body">
+
+    <div class="auth-card-3d" id="auth3dCard">
+        <div class="auth-header">
+            <a href="index.html" class="auth-logo">🌾 FarmDirect</a>
+            <p>Access your agricultural trade account</p>
+        </div>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="loginTabBtn" onclick="switchAuthTab('login')">Log In</button>
+            <button class="auth-tab" id="signupTabBtn" onclick="switchAuthTab('signup')">Register</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form" onsubmit="handleAuthSubmit(event, 'Login')">
+            <div class="form-group">
+                <label>Email or Mobile Number</label>
+                <input type="text" class="form-control" placeholder="farmer@agri.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-submit">Log In to Account</button>
+        </form>
+
+        <!-- Sign Up Form -->
+        <form id="signupForm" class="auth-form hidden" onsubmit="handleAuthSubmit(event, 'Registration')">
+            <div class="form-group">
+                <label>Full Name / Business Name</label>
+                <input type="text" class="form-control" placeholder="Green Valley Organic Farm" required>
+            </div>
+            <div class="form-group">
+                <label>Primary Phone Number</label>
+                <input type="tel" class="form-control" placeholder="+91 98765 43210" required>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" class="form-control" placeholder="farmer@agri.com" required>
+            </div>
+            <div class="form-group">
+                <label>Create Password</label>
+                <input type="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-submit">Register Farmer Account</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            if (mode === 'signup') {
+                switchAuthTab('signup');
+            }
+        });
+    </script>
+</body>
+</html>
