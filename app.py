@@ -375,6 +375,11 @@ def get_orders(email: Optional[str] = None, db: Session = Depends(get_db)):
         ]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    from fastapi.responses import FileResponse
+
+@app.get("/", response_class=HTMLResponse)
+def serve_home():
+    return FileResponse("home.html")
 
 # Static Mounting
 app.mount("/", StaticFiles(directory=".", html=True), name="static")
