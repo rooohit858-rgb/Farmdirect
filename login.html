@@ -142,22 +142,7 @@ if (signupForm) {
         console.error('Fetch Error:', err);
         alert('Server connect nahi ho pa raha!');
     }
-});
-            // Role ke according sahi page par redirect karein
-            if (payload.role.toLowerCase() === 'farmer') {
-                window.location.href = 'index.html';
-            } else {
-                window.location.href = 'consumer.html';
-            }
-        } else {
-            alert('Error: ' + data.message);
-        }
-        } catch (err) {
-            console.error('Fetch Error:', err);
-            alert('Server connect nahi ho pa raha! Make sure uvicorn server running ho.');
-        }
-    });
-}
+})}
 </script>
 </body>
 </html>
