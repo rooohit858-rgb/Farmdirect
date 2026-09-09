@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout & Payment | FarmDirect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f4f7f6; margin: 0; padding: 0; color: #333; }
+        header { background: #1b5e20; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.5rem; color: white; text-decoration: none; }
+        .checkout-container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2rem; }
+        .card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        h3 { margin-top: 0; color: #1b5e20; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; box-sizing: border-box; }
+        .pay-option { display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 8px; cursor: pointer; }
+        .pay-option input { width: auto; }
+        .order-summary-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.95rem; }
+        .total-box { font-size: 1.2rem; font-weight: bold; color: #2e7d32; border-top: 2px solid #eee; padding-top: 10px; margin-top: 10px; display: flex; justify-content: space-between; }
+        .btn-pay { background: #2e7d32; color: white; border: none; width: 100%; padding: 12px; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 1rem; }
+        .btn-pay:hover { background: #1b5e20; }
+        .btn-remove-sm { background: #ffebee; color: #c62828; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+        .btn-remove-sm:hover { background: #ffcdd2; }
+        
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 2rem; border-radius: 12px; text-align: center; max-width: 400px; width: 90%; }
+        .success-icon { font-size: 3rem; color: #2e7d32; margin-bottom: 10px; }
+        @media(max-width: 768px) { .checkout-container { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="consumer.html" class="logo">🌾 FarmDirect Secure Checkout</a>
+    </header>
+
+    <div class="checkout-container">
+        <!-- Left: Shipping Address & Payment Gateway -->
+        <div class="card">
+            <form id="checkoutForm" onsubmit="processPayment(event)">
+                <h3>📍 Shipping Address</h3>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="cName" placeholder="Ramesh Kumar" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="cPhone" placeholder="9876543210" required>
+                </div>
+                <div class="form-group">
+                    <label>Street Address / Farm Location</label>
+                    <input type="text" id="cAddress" placeholder="House No, Village, Street" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>City / District</label>
+                        <input type="text" id="cCity" placeholder="Jaipur" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Pincode</label>
+                        <input type="text" id="cPincode" placeholder="302001" required>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 1.5rem;">💳 Select Payment Gateway</h3>
+                <div class="pay-option" onclick="selectPay('UPI')">
+                    <input type="radio" name="payMethod" value="UPI" id="payUpi" checked>
+                    <label for="payUpi" style="margin:0; cursor:pointer;">UPI / QR Code (GPay, PhonePe, Paytm)</label>
+                </div>
+                <div class="pay-option" onclick="selectPay('Card')">
+                    <input type="radio" name="payMethod" value="Card" id="payCard">
+                    <label for="payCard" style="margin:0; cursor:pointer;">Credit / Debit Card</label>
+                </div>
+                <div class="pay-option" onclick="selectPay('COD')">
+                    <input type="radio" name="payMethod" value="COD" id="payCod">
+                    <label for="payCod" style="margin:0; cursor:pointer;">Cash on Delivery (COD)</label>
+                </div>
+
+                <!-- Dynamic Payment Input Fields -->
+                <div id="upiSection" class="form-group" style="margin-top: 10px;">
+                    <label>Enter UPI ID</label>
+                    <input type="text" id="upiId" placeholder="username@okhdfcbank">
+                </div>
+                <div id="cardSection" class="form-group" style="margin-top: 10px; display: none;">
+                    <label>Card Number</label>
+                    <input type="text" placeholder="4111 2222 3333 4444" maxlength="19">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
+                        <input type="text" placeholder="MM/YY" maxlength="5">
+                        <input type="password" placeholder="CVV" maxlength="3">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-pay">Pay & Place Order</button>
+            </form>
+        </div>
+
+        <!-- Right: Order Summary -->
+        <div class="card" style="height: fit-content;">
+            <h3>📦 Order Summary</h3>
+            <div id="summaryItems">
+                <!-- Dynamically loaded from cart -->
+            </div>
+            <div class="order-summary-item" style="margin-top: 15px;">
+                <span>Subtotal</span>
+                <span id="sumSubtotal">₹0</span>
+            </div>
+            <div class="order-summary-item">
+                <span>Direct Freight / Delivery</span>
+                <span>₹50</span>
+            </div>
+            <div class="total-box">
+                <span>Grand Total</span>
+                <span id="sumGrandTotal">₹50</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="success-icon">✅</div>
+            <h2>Payment Successful!</h2>
+            <p>Your order has been placed and assigned to logistics.</p>
+            <p><strong>Order ID: <span id="modalOrderId">#000</span></strong></p>
+            <button onclick="window.location.href='consumer.html'" style="background:#2e7d32; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer; font-weight:bold; margin-top:10px;">Back to Marketplace</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderCheckoutSummary();
+            
+            // Auto fill username if logged in
+            const savedName = localStorage.getItem('userName');
+            if(savedName) {
+                document.getElementById('cName').value = savedName;
+            }
+        });
+
+        function renderCheckoutSummary() {
+            const summaryContainer = document.getElementById('summaryItems');
+            const storedCart = JSON.parse(localStorage.getItem('cartItems')) || JSON.parse(localStorage.getItem('farmCart')) || [];
+            let subtotal = 0;
+
+            if (storedCart.length > 0) {
+                let html = "";
+                storedCart.forEach((item, index) => {
+                    let itemTotal = item.price * (item.quantity || 1);
+                    subtotal += itemTotal;
+                    html += `
+                        <div class="order-summary-item">
+                            <div>
+                                <span>${item.title} (x${item.quantity || 1})</span><br>
+                                <strong style="color: #2e7d32;">₹${itemTotal}</strong>
+                            </div>
+                            <button type="button" class="btn-remove-sm" onclick="removeCheckoutItem(${index})">Remove</button>
+                        </div>
+                    `;
+                });
+                summaryContainer.innerHTML = html;
+            } else {
+                summaryContainer.innerHTML = `<div style="text-align: center; color: #666; padding: 10px;">Your cart is empty. <a href="consumer.html" style="color: #2e7d32;">Go back</a></div>`;
+                subtotal = 0;
+            }
+
+            let freight = storedCart.length > 0 ? 50 : 0;
+            let grandTotal = subtotal > 0 ? subtotal + freight : 0;
+
+            document.getElementById('sumSubtotal').innerText = `₹${subtotal}`;
+            document.getElementById('sumGrandTotal').innerText = `₹${grandTotal}`;
+        }
+
+        function removeCheckoutItem(index) {
+            let storedCart = JSON.parse(localStorage.getItem('cartItems')) || JSON.parse(localStorage.getItem('farmCart')) || [];
+            storedCart.splice(index, 1);
+            
+            // Update both storages to keep them fully synced
+            localStorage.setItem('cartItems', JSON.stringify(storedCart));
+            localStorage.setItem('farmCart', JSON.stringify(storedCart));
+            
+            renderCheckoutSummary();
+        }
+
+        function selectPay(method) {
+            document.getElementById('upiSection').style.display = method === 'UPI' ? 'block' : 'none';
+            document.getElementById('cardSection').style.display = method === 'Card' ? 'block' : 'none';
+        }
+
+        async function processPayment(e) {
+            e.preventDefault();
+            
+            const storedCart = JSON.parse(localStorage.getItem('cartItems')) || JSON.parse(localStorage.getItem('farmCart')) || [];
+            if (storedCart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+
+            const selectedMethod = document.querySelector('input[name="payMethod"]:checked').value;
+            const grandTotalText = document.getElementById('sumGrandTotal').innerText.replace('₹', '');
+
+            const orderData = {
+                customer_name: document.getElementById('cName').value,
+                phone: document.getElementById('cPhone').value,
+                address: document.getElementById('cAddress').value,
+                city: document.getElementById('cCity').value,
+                pincode: document.getElementById('cPincode').value,
+                payment_method: selectedMethod,
+                grand_total: parseFloat(grandTotalText),
+                user_email: localStorage.getItem('userEmail') || 'guest@farmdirect.com' // Added user email tracking
+            };
+
+            try {
+                const res = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+                const data = await res.json();
+
+                if(res.ok) {
+                    document.getElementById('modalOrderId').innerText = `#${data.order_id}`;
+                    document.getElementById('successModal').style.display = 'flex';
+                    localStorage.removeItem('cartItems');
+                    localStorage.removeItem('farmCart');
+                } else {
+                    alert("Payment failed: " + data.detail);
+                }
+            } catch (err) {
+                alert("Network error during payment gateway simulation.");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order & Logistics | FarmDirect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <a href="consumer.html" class="logo">🌾 FarmDirect</a>
+            <nav class="nav-links">
+                <a href="consumer.html">Marketplace</a>
+                <button onclick="window.location.href='consumer.html'" style="background: #2e7d32; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Back to Dashboard</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Tracking Container -->
+    <div class="container" style="max-width: 800px; margin: 40px auto; padding: 0 20px;">
+        <div class="card" style="background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h2 style="color: #2e7d32; margin-top: 0; margin-bottom: 10px;">📦 Live Order & Shipment Tracking</h2>
+            <p style="color: #666; margin-bottom: 25px;">Enter your Order ID below to check live transit status and vehicle assignment.</p>
+            
+            <div style="display: flex; gap: 12px; margin-bottom: 25px;">
+                <input type="number" id="orderIdInput" placeholder="Enter Order ID (e.g., 1, 2...)" class="form-control" style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px;">
+                <button onclick="trackOrder()" style="background: #2e7d32; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px;">Track</button>
+            </div>
+
+            <div id="trackingResult" style="display: none; border-top: 1px solid #eee; padding-top: 20px;">
+                <h3 style="color: #333; margin-bottom: 15px;">Shipment Status Details</h3>
+                <div style="display: flex; flex-direction: column; gap: 12px; background: #f9f9f9; padding: 20px; border-radius: 10px;">
+                    <div>🆔 <strong>Order ID:</strong> <span id="resOrderId">-</span></div>
+                    <div>👤 <strong>Customer Name:</strong> <span id="resCustomer">-</span></div>
+                    <div>📍 <strong>Delivery Address:</strong> <span id="resAddress">-</span></div>
+                    <div>💰 <strong>Grand Total:</strong> ₹<span id="resTotal">-</span></div>
+                    <div>💳 <strong>Payment Status:</strong> <span id="resPayment" style="color: green; font-weight: bold;">-</span></div>
+                    <div>🚚 <strong>Assigned Logistics / Vehicle:</strong> <span id="resVehicle" style="color: #1565c0; font-weight: bold;">Standard Delivery / Processing</span></div>
+                    <div>📌 <strong>Current Transit Status:</strong> <span id="resStatus" style="background: #e8f5e9; color: #2e7d32; padding: 4px 10px; border-radius: 6px; font-weight: bold; display: inline-block;">Dispatched</span></div>
+                </div>
+            </div>
+
+            <div id="noResultMsg" style="display: none; color: #d32f2f; font-weight: 500; margin-top: 15px;">
+                ⚠️ No order found with this ID. Please check and try again.
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 FarmDirect. Empowering Agriculture with Direct Peer-to-Peer Trading.</p>
+    </footer>
+
+    <script>
+        async function trackOrder() {
+            const orderId = document.getElementById('orderIdInput').value.trim();
+            const resultBox = document.getElementById('trackingResult');
+            const errorMsg = document.getElementById('noResultMsg');
+
+            if (!orderId) {
+                alert("Please enter a valid Order ID!");
+                return;
+            }
+
+            try {
+                // Fetching orders from backend API
+                const response = await fetch('/api/orders');
+                const orders = await response.json();
+
+                // Find matching order
+                const matchedOrder = orders.find(o => o.id.toString() === orderId.toString());
+
+                if (matchedOrder) {
+                    document.getElementById('resOrderId').innerText = matchedOrder.id;
+                    document.getElementById('resCustomer').innerText = matchedOrder.customer_name;
+                    document.getElementById('resAddress').innerText = `${matchedOrder.address}, ${matchedOrder.city} - ${matchedOrder.pincode}`;
+                    document.getElementById('resTotal').innerText = matchedOrder.grand_total;
+                    document.getElementById('resPayment').innerText = matchedOrder.payment_status;
+                    
+                    // Dynamic vehicle assignment mock based on total/items
+                    let vehicle = matchedOrder.grand_total > 2000 ? "Heavy Cargo Truck (Refrigerated)" : "Local Farm Pickup Van";
+                    document.getElementById('resVehicle').innerText = vehicle;
+
+                    resultBox.style.display = 'block';
+                    errorMsg.style.display = 'none';
+                } else {
+                    resultBox.style.display = 'none';
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                console.error("Error tracking order:", err);
+                alert("Failed to connect to backend server.");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -23,84 +23,135 @@
         </div>
 
         <!-- Login Form -->
-        <form id="loginForm" class="auth-form" onsubmit="handleAuthSubmit(event, 'Login')">
+        <form id="loginForm" class="auth-form" onsubmit="handleLoginSubmit(event)">
             <div class="form-group">
-                <label>Email or Mobile Number</label>
-                <input type="text" class="form-control" placeholder="farmer@agri.com" required>
+                <label>Email Address</label>
+                <input type="email" id="loginEmail" class="form-control" placeholder="farmer@agri.com" required>
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" class="form-control" placeholder="••••••••" required>
+                <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
             </div>
             <button type="submit" class="btn-submit">Log In to Account</button>
         </form>
 
         <!-- Sign Up Form -->
-       <form id="signupForm" class="auth-form hidden">
+        <form id="signupForm" class="auth-form hidden">
             <div class="form-group">
                 <label>Full Name / Business Name</label>
-                <input type="text" class="form-control" placeholder="Green Valley Organic Farm" required>
+                <input type="text" id="signupName" class="form-control" placeholder="Green Valley Organic Farm" required>
             </div>
             <div class="form-group">
                 <label>Primary Phone Number</label>
-                <input type="tel" class="form-control" placeholder="+91 98765 43210" required>
+                <input type="tel" id="signupPhone" class="form-control" placeholder="+91 98765 43210" required>
             </div>
             <div class="form-group">
                 <label>Email Address</label>
-                <input type="email" class="form-control" placeholder="farmer@agri.com" required>
+                <input type="email" id="signupEmail" class="form-control" placeholder="farmer@agri.com" required>
             </div>
             <div class="form-group">
                 <label>Create Password</label>
-                <input type="password" class="form-control" placeholder="••••••••" required>
+                <input type="password" id="signupPassword" class="form-control" placeholder="••••••••" required>
             </div>
             <div class="form-group">
-    <label>Select Role</label>
-    <select id="userRole" class="form-control" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; background: #fff;">
-        <option value="consumer">Consumer / Buyer</option>
-        <option value="farmer">Farmer / Seller</option>
-    </select>
-</div>
-            <button type="submit" class="btn-submit">Register Farmer Account</button>
+                <label>Select Role</label>
+                <select id="userRole" class="form-control" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; background: #fff;">
+                    <option value="consumer">Consumer / Buyer</option>
+                    <option value="farmer">Farmer / Seller</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-submit">Register Account</button>
         </form>
     </div>
 
     <script src="script.js"></script>
     <script>
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const loginBtn = document.getElementById('loginTabBtn');
+            const signupBtn = document.getElementById('signupTabBtn');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                loginBtn.classList.add('active');
+                signupBtn.classList.remove('active');
+            } else {
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                signupBtn.classList.add('active');
+                loginBtn.classList.remove('active');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const mode = urlParams.get('mode');
             if (mode === 'signup') {
                 switchAuthTab('signup');
             }
+            
+            const roleParam = urlParams.get('role');
+            if (roleParam) {
+                const roleSelect = document.getElementById('userRole');
+                if (roleSelect) {
+                    roleSelect.value = roleParam.toLowerCase();
+                }
+            }
         });
-    </script>
-    <script>
-      window.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const roleParam = urlParams.get('role');
-        if (roleParam) {
-            const roleSelect = document.querySelector('select');
-            if (roleSelect) {
-                roleSelect.value = roleParam.charAt(0).toUpperCase() + roleParam.slice(1);
+
+        // Handle Login Submission
+        async function handleLoginSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    localStorage.setItem('userRole', data.user.role);
+                    localStorage.setItem('userName', data.user.name);
+                    localStorage.setItem('userEmail', data.user.email);
+
+                    alert('Login Successful!');
+                    
+                    const role = (data.user.role || '').toLowerCase();
+                    if (role === 'farmer') {
+                        window.location.replace('dashboard.html');
+                    } else {
+                        window.location.replace('consumer.html');
+                    }
+                } else {
+                    alert('Login Failed: ' + (data.detail || data.message || 'Invalid credentials'));
+                }
+            } catch (err) {
+                console.error('Login Error:', err);
+                alert('Server se connect nahi ho pa raha!');
             }
         }
-    });  
-document.addEventListener('DOMContentLoaded', () => {
-    const signupForm = document.querySelector('#signupForm');
-    if (signupForm) {
-        signupForm.addEventListener('submit', async function(e) {
+
+        // Handle Signup Submission
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            const nameInput = signupForm.querySelector('input[type="text"]') || signupForm.querySelector('input');
-            const emailInput = signupForm.querySelector('input[type="email"]');
-            const passwordInput = signupForm.querySelector('input[type="password"]');
-            const roleSelect = signupForm.querySelector('select');
-            
+            const nameEl = document.getElementById('signupName') || document.querySelector('#signupForm input[type="text"]');
+            const emailEl = document.getElementById('signupEmail') || document.querySelector('#signupForm input[type="email"]');
+            const passEl = document.getElementById('signupPassword') || document.querySelector('#signupForm input[type="password"]');
+            const roleEl = document.getElementById('userRole') || document.querySelector('#signupForm select');
+
             const payload = {
-                name: nameInput ? nameInput.value : 'Farmer User',
-                email: emailInput ? emailInput.value : 'farmer@agri.com',
-                password: passwordInput ? passwordInput.value : '123456',
-                role: roleSelect ? roleSelect.value : 'Farmer'
+                name: nameEl ? nameEl.value.trim() : "Farmer User",
+                email: emailEl ? emailEl.value.trim() : "",
+                password: passEl ? passEl.value : "",
+                role: roleEl ? roleEl.value.trim() : "farmer"
             };
 
             try {
@@ -117,11 +168,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('userName', payload.name);
                     localStorage.setItem('userEmail', payload.email);
 
-                    alert('Registration Successful! Role: ' + payload.role);
+                    alert('Registration Successful! Name: ' + payload.name);
 
-                    const cleanRole = payload.role.toLowerCase().trim();
-                    if (cleanRole === 'farmer' || cleanRole.includes('farmer')) {
-                        window.location.replace('index.html');
+                    const role = payload.role.toLowerCase();
+                    if (role === 'farmer') {
+                        window.location.replace('dashboard.html');
                     } else {
                         window.location.replace('consumer.html');
                     }
@@ -133,10 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Server se connect nahi ho pa raha!');
             }
         });
-    }
-});
-    
-
-</script>
+    </script>
 </body>
 </html>
