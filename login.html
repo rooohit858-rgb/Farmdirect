@@ -53,6 +53,13 @@
                 <label>Create Password</label>
                 <input type="password" class="form-control" placeholder="••••••••" required>
             </div>
+            <div class="form-group">
+    <label>Select Role</label>
+    <select id="userRole" class="form-control" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; background: #fff;">
+        <option value="consumer">Consumer / Buyer</option>
+        <option value="farmer">Farmer / Seller</option>
+    </select>
+</div>
             <button type="submit" class="btn-submit">Register Farmer Account</button>
         </form>
     </div>
@@ -67,5 +74,90 @@
             }
         });
     </script>
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const roleParam = urlParams.get('role');
+        if (roleParam) {
+            const roleSelect = document.querySelector('select');
+            if (roleSelect) {
+                roleSelect.value = roleParam.charAt(0).toUpperCase() + roleParam.slice(1);
+            }
+        }
+    });  
+// Registration Form Submission Handler
+const signupForm = document.querySelector('#signupForm') || document.querySelector('form');
+
+if (signupForm) {
+   signupForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    // Inputs se values capture karna
+    const nameInput = document.querySelector('input[type="text"]') || document.getElementById('name');
+    const emailInput = document.querySelector('input[type="email"]');
+    const passwordInput = document.querySelector('input[type="password"]');
+    const roleSelect = document.querySelector('select') || { value: 'Farmer' };
+    
+    // Extra fields (agar HTML form me inputs bane hain)
+    const phoneInput = document.getElementById('phone') || document.getElementById('regPhone');
+    const locationInput = document.getElementById('location') || document.getElementById('regLocation');
+
+    const payload = {
+        name: nameInput ? nameInput.value : '',
+        email: emailInput ? emailInput.value : '',
+        password: passwordInput ? passwordInput.value : '',
+        role: roleSelect ? roleSelect.value : 'Farmer'
+    };
+
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            // Profile details browser memory mein save karein
+            localStorage.setItem('userRole', payload.role);
+            localStorage.setItem('userName', payload.name);
+            localStorage.setItem('userEmail', payload.email);
+            localStorage.setItem('userPhone', phoneInput ? phoneInput.value : '+91 9876543210');
+            localStorage.setItem('userLocation', locationInput ? locationInput.value : 'Jaipur, Rajasthan');
+            localStorage.setItem('joinedDate', new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }));
+
+            alert('Registration Successful! Role: ' + payload.role);
+
+            // Role routing
+            if (payload.role.toLowerCase() === 'farmer') {
+                window.location.href = 'index.html';
+            } else {
+                window.location.href = 'consumer.html';
+            }
+        } else {
+            alert('Error: ' + data.message);
+        }
+    } catch (err) {
+        console.error('Fetch Error:', err);
+        alert('Server connect nahi ho pa raha!');
+    }
+});
+            // Role ke according sahi page par redirect karein
+            if (payload.role.toLowerCase() === 'farmer') {
+                window.location.href = 'index.html';
+            } else {
+                window.location.href = 'consumer.html';
+            }
+        } else {
+            alert('Error: ' + data.message);
+        }
+        } catch (err) {
+            console.error('Fetch Error:', err);
+            alert('Server connect nahi ho pa raha! Make sure uvicorn server running ho.');
+        }
+    });
+}
+</script>
 </body>
 </html>

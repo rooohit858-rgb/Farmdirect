@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumer Marketplace | FarmDirect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<script>
+        const userRole = localStorage.getItem('userRole');
+        if (!userRole || userRole.toLowerCase() !== 'consumer') {
+            alert('Access Denied: Consumer account se login karein.');
+            window.location.href = 'login.html';
+        }
+    </script>
+<body>
+
+    <!-- Header Navigation -->
+   <header>
+        <div class="nav-container">
+            <a href="consumer.html" class="logo">🌾 FarmDirect</a>
+            
+            <!-- Search Bar (Aapka original) -->
+            <div class="header-search">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="headerSearchInput" placeholder="Search crops, fruits, dairy..." onkeyup="filterProducts()">
+            </div>
+
+            <nav class="nav-links">
+                <a href="consumer.html#marketplace">Marketplace</a>
+                <button class="cart-btn" onclick="window.location.href='cart.html'">🛒 Cart (<span id="cart-count">0</span>)</button>
+                <button onclick="toggleProfile()" style="background: #2e7d32; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; margin-left: 8px;">
+                    👤 My Profile
+                </button>
+            </nav>
+        </div>
+    </header>
+    <!-- Profile Modal Popup -->
+<div id="profileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 30px; border-radius: 16px; width: 350px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); font-family: sans-serif; position: relative;">
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="width: 70px; height: 70px; background: #e3f2fd; color: #1565c0; border-radius: 50%; font-size: 32px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto; border: 2px solid #1565c0;">
+                👤
+            </div>
+            <h3 id="profName" style="margin: 0; color: #0d47a1; font-size: 20px;">User Name</h3>
+            <span id="profRoleBadge" style="background: #1565c0; color: white; padding: 2px 10px; border-radius: 12px; font-size: 12px; text-transform: uppercase; font-weight: bold; margin-top: 5px; display: inline-block;">CONSUMER</span>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #eee; margin-bottom: 15px;">
+
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: #333;">
+            <div>📧 <strong>Email:</strong> <span id="profEmail" style="float: right; color: #555;">-</span></div>
+            <div>📞 <strong>Phone:</strong> <span id="profPhone" style="float: right; color: #555;">-</span></div>
+            <div>📍 <strong>Location:</strong> <span id="profLocation" style="float: right; color: #555;">-</span></div>
+            <div>📅 <strong>Member Since:</strong> <span id="profJoined" style="float: right; color: #555;">-</span></div>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0 15px 0;">
+
+        <div style="display: flex; gap: 10px; justify-content: space-between;">
+            <button onclick="logoutUser()" style="flex: 1; background: #d32f2f; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold;">Logout</button>
+            <button onclick="toggleProfile()" style="flex: 1; background: #757575; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer;">Close</button>
+        </div>
+    </div>
+</div>
+            
+           
+        </div>
+    </header>
+
+    <!-- Hero Parallax Section -->
+    <section class="hero-parallax">
+        <div class="hero-content">
+            <h1>Direct Agricultural Marketplace</h1>
+            <p>Buy fresh crops, vegetables, fruits, dairy, and livestock directly from verified local farmers.</p>
+            <div class="hero-actions">
+                <a href="#marketplace" class="btn-hero primary">Browse Featured Produce</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Symmetrical Marketplace Container -->
+    <div class="container" id="marketplace">
+        <aside class="sidebar">
+            <div class="card">
+                <h3>Filter Marketplace</h3>
+                <div class="filter-group">
+                    <label for="category-filter" style="display:block; margin: 10px 0 5px; font-weight:600;">Category</label>
+                    <select id="category-filter" class="form-control" onchange="filterProducts()">
+                        <option value="all">All Items</option>
+                        <option value="Grains & Feed">Grains, Feed & Hay</option>
+                        <option value="Vegetables">Fresh Vegetables</option>
+                        <option value="Fruits">Fresh Fruits</option>
+                        <option value="Dairy & Meat">Dairy & Animal Products</option>
+                    </select>
+                </div>
+            </div>
+        </aside>
+
+        <main>
+            <div class="marketplace-header">
+                <h3>Available Listings</h3>
+                <span id="resultsCount" class="results-count">Loading produce...</span>
+            </div>
+            
+            <!-- Standardized Grid -->
+            <div class="products-grid" id="productGrid"></div>
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 FarmDirect. Empowering Agriculture with Direct Peer-to-Peer Trading.</p>
+    </footer>
+
+    <script>
+        let allProducts = [];
+
+        // Fallback demo items in case API is empty or offline
+        const sampleProducts = [
+            { id: 101, title: "Fresh Organic Tomatoes", category: "Vegetables", price: 40, image: "https://images.unsplash.com/photo-1546470427-e26264be0b11?auto=format&fit=crop&w=500&q=80" },
+            { id: 102, title: "Farm Wheat (Kanak)", category: "Grains & Feed", price: 2100, image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=500&q=80" },
+            { id: 103, title: "Fresh Red Apples", category: "Fruits", price: 120, image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=500&q=80" },
+            { id: 104, title: "Pure Cow Milk (1L)", category: "Dairy & Meat", price: 60, image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=500&q=80" }
+        ];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateCartCount();
+            loadConsumerProducts();
+        });
+
+        async function loadConsumerProducts() {
+            try {
+                const response = await fetch('/api/products');
+                if (!response.ok) throw new Error("API Network response was not ok");
+                
+                const data = await response.json();
+                
+                // If API returns valid non-empty array, use it; otherwise fallback to sample items
+                if (Array.isArray(data) && data.length > 0) {
+                    allProducts = data;
+                } else if (data.products && Array.isArray(data.products) && data.products.length > 0) {
+                    allProducts = data.products;
+                } else {
+                    allProducts = sampleProducts;
+                }
+            } catch (err) {
+                console.warn("Backend API not reached. Loading fallback produce list:", err);
+                allProducts = sampleProducts;
+            }
+
+            renderGrid(allProducts);
+        }
+
+        function renderGrid(products) {
+            const grid = document.getElementById("productGrid");
+            const resultsCount = document.getElementById("resultsCount");
+            grid.innerHTML = "";
+
+            if (!products || products.length === 0) {
+                grid.innerHTML = "<div class='no-results'>No produce items found.</div>";
+                if (resultsCount) resultsCount.innerText = "Showing 0 Items";
+                return;
+            }
+
+            if (resultsCount) resultsCount.innerText = `Showing ${products.length} Items`;
+
+            products.forEach(p => {
+                const title = p.title || p.name || "Agricultural Item";
+                const price = p.price || 0;
+                const category = p.category || "PRODUCE";
+                const imageUrl = p.image || p.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=500&q=80';
+                
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <img src="${imageUrl}" alt="${title}" class="product-img">
+                        <div class="product-details">
+                            <span class="product-category">${category}</span>
+                            <h4 class="product-title">${title}</h4>
+                            <span class="product-seller">Seller: Verified Farmer</span>
+                            <div class="product-bottom">
+                                <span class="product-price">₹${price}</span>
+                                <button class="btn-add" onclick="addToCart(${p.id || Math.random()}, '${title.replace(/'/g, "\\'")}', ${price}, '${imageUrl}')">
+                                    + Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterProducts() {
+            const searchTerm = (document.getElementById("headerSearchInput").value || "").toLowerCase();
+            const category = document.getElementById("category-filter").value;
+
+            const filtered = allProducts.filter(p => {
+                const title = (p.title || p.name || "").toLowerCase();
+                const matchesSearch = title.includes(searchTerm);
+                const matchesCategory = category === "all" || (p.category && p.category.toLowerCase() === category.toLowerCase());
+                return matchesSearch && matchesCategory;
+            });
+
+            renderGrid(filtered);
+        }
+
+        function addToCart(id, title, price, image) {
+            let cart = JSON.parse(localStorage.getItem('farmCart')) || [];
+            
+            const existingItem = cart.find(item => item.id === id);
+            if (existingItem) {
+                existingItem.quantity = (existingItem.quantity || 1) + 1;
+            } else {
+                cart.push({ id, title, price, image, quantity: 1 });
+            }
+            
+            localStorage.setItem('farmCart', JSON.stringify(cart));
+            updateCartCount();
+            alert(`"${title}" added to your cart!`);
+        }
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('farmCart')) || [];
+            const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            const badge = document.getElementById("cart-count");
+            if (badge) badge.innerText = totalCount;
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "login.html";
+        }
+    </script>,
+    <script>
+    function toggleProfile() {
+        const modal = document.getElementById('profileModal');
+        if (modal.style.display === 'none' || modal.style.display === '') {
+            // LocalStorage se details load karna
+            document.getElementById('profName').innerText = localStorage.getItem('userName') || 'Consumer User';
+            document.getElementById('profEmail').innerText = localStorage.getItem('userEmail') || 'N/A';
+            document.getElementById('profPhone').innerText = localStorage.getItem('userPhone') || 'N/A';
+            document.getElementById('profLocation').innerText = localStorage.getItem('userLocation') || 'N/A';
+            document.getElementById('profJoined').innerText = localStorage.getItem('joinedDate') || 'Sep 2026';
+            
+            const role = localStorage.getItem('userRole') || 'Consumer';
+            document.getElementById('profRoleBadge').innerText = role.toUpperCase();
+
+            modal.style.display = 'flex';
+        } else {
+            modal.style.display = 'none';
+        }
+    }
+
+    function logoutUser() {
+        localStorage.clear();
+        alert('Logged out successfully!');
+        window.location.href = 'login.html';
+    }
+</script>
+</body>
+</html>

@@ -516,8 +516,23 @@ function switchAuthTab(tab) {
 
 function handleAuthSubmit(event, type) {
     event.preventDefault();
-    alert(`${type} Successful! Redirecting back to marketplace...`);
-    window.location.href = 'index.html';
+    
+    // Dropdown se selected role read karein
+    const roleSelect = document.getElementById("userRole");
+    const selectedRole = roleSelect ? roleSelect.value : "consumer";
+    
+    // LocalStorage mein session aur role save karein
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("userRole", selectedRole);
+    
+    alert(`${type} Successful as ${selectedRole.toUpperCase()}!`);
+    
+    // Role based Redirection
+    if (selectedRole === "farmer") {
+        window.location.href = 'dashboard.html';
+    } else {
+        window.location.href = 'consumer.html';
+    }
 }
 
 function attach3DTilt(element) {
@@ -544,3 +559,39 @@ window.addEventListener('scroll', () => {
 document.addEventListener('DOMContentLoaded', () => {
     updateCartBadge();
 });
+// Fetch products added by Farmer and display on Index page
+async function loadMarketplaceProducts() {
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/products");
+        const products = await res.json();
+
+        // Aapke index.html me jahan products ki list hai us container ki class/id
+        const productContainer = document.querySelector(".product-grid") || document.querySelector("#featuredListingsContainer");
+
+        if (productContainer && products.length > 0) {
+            products.forEach(p => {
+                const card = document.createElement("div");
+                card.className = "product-card";
+                card.innerHTML = `
+                    <div class="product-img">
+                        <img src="${p.image || 'https://via.placeholder.com/150'}" alt="${p.title}" style="width:100%; height:180px; object-fit:cover;">
+                    </div>
+                    <div class="product-details" style="padding: 10px;">
+                        <span class="category" style="font-size:12px; color:#666;">${p.category}</span>
+                        <h3 style="margin:5px 0;">${p.title}</h3>
+                        <p style="margin:5px 0; color:#555;">📍 ${p.location}</p>
+                        <h4 style="color:#2e7d32; margin:5px 0;">₹${p.price}</h4>
+                        <button style="background:#2e7d32; color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; width:100%; margin-top:8px;">
+                            🛒 Add To Cart
+                        </button>
+                    </div>
+                `;
+                productContainer.appendChild(card);
+            });
+        }
+    } catch (err) {
+        console.log("Error loading products:", err);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", loadMarketplaceProducts);
