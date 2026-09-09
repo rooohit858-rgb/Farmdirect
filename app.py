@@ -5,13 +5,16 @@ import requests
 from datetime import datetime, timedelta
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, ForeignKey, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
 from pydantic import BaseModel
+
+# --- PATH SETUP ---
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # --- DATABASE SETUP ---
 DATABASE_URL = "sqlite:///./farmdirect.db"
@@ -375,11 +378,14 @@ def get_orders(email: Optional[str] = None, db: Session = Depends(get_db)):
         ]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    from fastapi.responses import FileResponse
 
+# --- ROOT ROUTE TO SERVE HOME PAGE ---
 @app.get("/", response_class=HTMLResponse)
 def serve_home():
-    return FileResponse("home.html")
+    home_path = os.path.join(BASE_DIR, "home.html")
+    if os.path.exists(home_path):
+        return FileResponse(home_path)
+    return HTMLResponse("<h3>Error: home.html not found</h3>", status_code=404)
 
-# Static Mounting
-app.mount("/", StaticFiles(directory=".", html=True), name="static")
+# --- STATIC MOUNTING ---
+app.mount("/", StaticFiles(directory=BASE_DIR, html=True), name="static")
