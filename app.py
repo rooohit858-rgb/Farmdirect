@@ -325,29 +325,31 @@ class ProductCreate(BaseModel):
     image_url: Optional[str] = ""
 
 # 1. Product Create Endpoint
-@app.post("/api/products")
+v@app.post("/api/products")
 def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     try:
-        # DBProduct me saare NOT NULL columns ke default values pass kar rahe hain
+        # Frontend se aane wale keys ko securely handle karna
+        p_title = getattr(product, 'title', None) or getattr(product, 'name', 'Agricultural Produce')
+        p_image = getattr(product, 'image', None) or getattr(product, 'image_url', 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=500&q=80')
+        
         db_product = DBProduct(
-            title=product.title,
-            category=product.category,
+            title=p_title,
+            category=product.category or "Grains & Feed",
             price=product.price,
-            seller="Farmer",
-            seller_location=product.location,
-            seller_rating=5.0,
+            seller="Verified Farmer",
+            seller_location=getattr(product, 'location', 'Local Farm'),
+            seller_rating=4.9,
             verified_retailer=True,
             stock=100,
-            delivery_radius=50,
-            estimated_delivery_days=2,
-            description="Fresh farm produce",
-            image=product.image_url
+            delivery_radius="Regional",
+            estimated_delivery_days="2-3 Days",
+            description=getattr(product, 'description', 'Fresh farm harvested produce.'),
+            image=p_image
         )
         db.add(db_product)
         db.commit()
         db.refresh(db_product)
-        return db_product
-
+        return {"status": "success", "message": "Product saved successfully!", "id": db_product.id}
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
