@@ -284,6 +284,22 @@
         window.location.href = 'login.html';
     }
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const userName = localStorage.getItem('userName');
+        const userRole = localStorage.getItem('userRole');
+
+        // Agar user logged-in hai (yani naam save hai)
+        if (userName) {
+            // Login / Register buttons ya links ko dhoond kar hide karna
+            const authButtons = document.querySelectorAll('.btn-auth, a[href="login.html"]');
+            authButtons.forEach(btn => {
+                // Agar button "Login / Register" ya aisa kuch hai toh usko hide ya change kar sakte hain
+                btn.style.display = 'none'; 
+            });
+        }
+    });
+</script>
 
 </body>
 </html>
