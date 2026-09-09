@@ -538,5 +538,14 @@ def create_product(item: ProductCreate, db: Session = Depends(get_db)):
 @app.get("/api/users")
 def get_users(db: Session = Depends(get_db)):
     return db.query(DBUser).all()
+from fastapi.responses import HTMLResponse
+import os
+
+@app.get("/", response_class=HTMLResponse)
+async def serve_home():
+    if os.path.exists("home.html"):
+        with open("home.html", "r", encoding="utf-8") as f:
+            return f.read()
+    return "home.html not found!"
 
 app.mount("/", StaticFiles(directory=".", html=True), name="static")
