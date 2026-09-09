@@ -63,7 +63,7 @@ class DBOrder(Base):
     payment_method = Column(String)
     payment_status = Column(String, default="Success")
     grand_total = Column(Float)
-    user_email = Column(String, index=True, default="guest@farmdirect.com") # User-wise tracking added
+    user_email = Column(String, index=True, default="guest@farmdirect.com")
     created_at = Column(String)
 
 class DBLogisticsShipment(Base):
@@ -269,7 +269,6 @@ MANDI_DATA = {
 def forecast_demand(data: DemandRequest):
     crop_key = data.crop_name.strip().lower()
     
-    # Hybrid Approach: Try fetching live data first with 2s timeout
     try:
         api_url = f"https://api.agmarknet.gov.in/v1/search?crop={crop_key}"
         response = requests.get(api_url, timeout=2)
@@ -285,9 +284,8 @@ def forecast_demand(data: DemandRequest):
                 "expected_7day_price": f"₹{round(api_data.get('price', 25) * 1.1, 2)}/kg"
             }
     except Exception:
-        pass  # Fallback to simulation smoothly if offline/API fails
+        pass
 
-    # Smart Fallback Simulation Engine
     base_info = MANDI_DATA.get(crop_key, {"base_price": 40.0, "demand_index": 75, "season": "Regular Demand"})
     current_mandi_price = round(base_info["base_price"] * random.uniform(0.95, 1.05), 2)
     forecasted_price = round(current_mandi_price * 1.12, 2)
