@@ -110,7 +110,7 @@ if (signupForm) {
     };
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/register', {
+        const response = await fetch('/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -130,11 +130,13 @@ if (signupForm) {
             alert('Registration Successful! Role: ' + payload.role);
 
             // Role routing
-            if (payload.role.toLowerCase() === 'farmer') {
-                window.location.href = 'index.html';
-            } else {
-                window.location.href = 'consumer.html';
-            }
+           // Role routing with strict force replace
+        const cleanRole = payload.role.toLowerCase().trim();
+        if (cleanRole === 'farmer' || cleanRole.includes('farmer')) {
+            window.location.replace('index.html');
+        } else {
+            window.location.replace('consumer.html');
+        }
         } else {
             alert('Error: ' + data.message);
         }
