@@ -595,3 +595,7 @@ async function loadMarketplaceProducts() {
 }
 
 document.addEventListener("DOMContentLoaded", loadMarketplaceProducts);
+function logoutUser() {
+    localStorage.clear();
+    window.location.replace('login.html');
+}
