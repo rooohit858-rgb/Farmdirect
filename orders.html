@@ -4,20 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Orders & Tracking | FarmDirect</title>
-<<<<<<< HEAD
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-=======
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
     <style>
         body { font-family: 'Inter', sans-serif; background: #f4f7f6; margin: 0; padding: 0; color: #333; }
         header { background: #1b5e20; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
         .logo { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.5rem; color: white; text-decoration: none; }
         .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
-<<<<<<< HEAD
         .order-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 1.5rem; border-left: 6px solid #2e7d32; transition: transform 0.2s; }
         .order-card:hover { transform: translateY(-2px); }
         .order-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 12px; }
@@ -25,20 +20,12 @@
         .order-details { font-size: 0.95rem; color: #555; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .btn-back { background: #2e7d32; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; text-decoration: none; font-weight: 500; }
         .btn-back:hover { background: #1b4332; }
-=======
-        .order-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 1.5rem; border-left: 6px solid #2e7d32; }
-        .order-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
-        .badge { background: #e8f5e9; color: #2e7d32; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; }
-        .order-details { font-size: 0.95rem; color: #555; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn-back { background: #2e7d32; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; text-decoration: none; font-weight: 500; }
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
     </style>
 </head>
 <body>
 
     <header>
         <a href="consumer.html" class="logo">🌾 FarmDirect Order History</a>
-<<<<<<< HEAD
         <div style="display: flex; gap: 10px; align-items: center;">
             <a href="logistics.html" class="btn-back" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);">🚚 Route Optimizer</a>
             <a href="consumer.html" class="btn-back">← Back to Marketplace</a>
@@ -47,13 +34,6 @@
 
     <div class="container">
         <h2 style="color: #1b5e20; margin-bottom: 1.5rem;">📦 Your Placed Orders & Live Tracking</h2>
-=======
-        <a href="consumer.html" class="btn-back">← Back to Marketplace</a>
-    </header>
-
-    <div class="container">
-        <h2>📦 Your Placed Orders</h2>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
         <div id="ordersContainer">
             <p>Loading your orders...</p>
         </div>
@@ -62,7 +42,6 @@
     <script>
         document.addEventListener("DOMContentLoaded", async () => {
             const container = document.getElementById('ordersContainer');
-<<<<<<< HEAD
             const userEmail = localStorage.getItem('userEmail');
             
             try {
@@ -81,20 +60,10 @@
                             <a href="consumer.html" class="btn-back">Browse Fresh Marketplace</a>
                         </div>
                     `;
-=======
-            
-            try {
-                const res = await fetch('/api/orders');
-                const orders = await res.json();
-
-                if (!orders || orders.length === 0) {
-                    container.innerHTML = `<p style="color: #666;">You haven't placed any orders yet.</p>`;
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                     return;
                 }
 
                 let html = "";
-<<<<<<< HEAD
                 orders.forEach(order => {
                     html += `
                         <div class="order-card">
@@ -117,20 +86,6 @@
                                     </div>
                                     <span style="font-size: 1.15rem; font-weight: bold; color: #1b5e20;">Total: ₹${order.grand_total}</span>
                                 </div>
-=======
-                orders.reverse().forEach(order => {
-                    html += `
-                        <div class="order-card">
-                            <div class="order-header">
-                                <strong>Order #${order.id} - ${order.customer_name}</strong>
-                                <span class="badge">${order.payment_status || 'Completed'}</span>
-                            </div>
-                            <div class="order-details">
-                                <div>📍 <strong>Address:</strong> ${order.address}, ${order.city} (${order.pincode})</div>
-                                <div>📞 <strong>Phone:</strong> ${order.phone}</div>
-                                <div>💳 <strong>Payment:</strong> ${order.payment_method}</div>
-                                <div>💰 <strong>Grand Total:</strong> ₹${order.grand_total}</div>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                             </div>
                         </div>
                     `;
@@ -138,22 +93,14 @@
                 container.innerHTML = html;
 
             } catch (err) {
-<<<<<<< HEAD
                 container.innerHTML = `
                     <div style="padding: 2rem; background: #fff3f3; border: 1px solid #ffcdd2; border-radius: 8px; color: #c62828;">
                         <p><strong>Notice:</strong> Unable to load live orders from server.</p>
                         <a href="consumer.html" class="btn-back" style="display:inline-block; margin-top:10px;">Return to Marketplace</a>
                     </div>
                 `;
-=======
-                container.innerHTML = `<p style="color: #d32f2f;">Failed to load order history.</p>`;
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
             }
         });
     </script>
 </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910

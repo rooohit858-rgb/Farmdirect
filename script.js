@@ -290,18 +290,13 @@ function renderCartPage() {
     if (grandTotalEl) grandTotalEl.innerText = `₹${(subtotal + freight).toLocaleString('en-IN')}`;
 }
 
-<<<<<<< HEAD
 async function processOrder() {
-=======
-function processOrder() {
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
     const cart = getCart();
     if (cart.length === 0) {
         alert("Your cart is empty!");
         return;
     }
     const selectedMethod = document.querySelector('input[name="payment"]:checked')?.value || 'upi';
-<<<<<<< HEAD
     const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const freight = 150;
     const grandTotal = subtotal + freight;
@@ -330,9 +325,6 @@ function processOrder() {
         alert(`Order Placed Successfully via ${selectedMethod.toUpperCase()}! Thank you for choosing FarmDirect.`);
     }
 
-=======
-    alert(`Order Placed Successfully via ${selectedMethod.toUpperCase()}! Thank you for choosing FarmDirect.`);
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
     localStorage.removeItem('farmCart');
     window.location.href = 'index.html';
 }
@@ -363,11 +355,7 @@ function renderMarketplace(dataToRender = productsData.slice(0, 8)) {
             <div class="product-details">
                 <span class="product-category">${product.category}</span>
                 <h4 class="product-title">${product.title}</h4>
-<<<<<<< HEAD
                 <div class="product-seller">📍 ${product.sellerLocation || product.location || 'Local Farm'}</div>
-=======
-                <div class="product-seller">📍 ${product.sellerLocation}</div>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                 <div class="product-bottom">
                     <span class="product-price">₹${product.price.toLocaleString('en-IN')}</span>
                     <button class="btn-add" onclick="event.stopPropagation(); addToCart('${product.id}')">🛒 Add to Cart</button>
@@ -391,11 +379,7 @@ function searchProducts(query) {
     const filtered = productsData.filter(p => 
         p.title.toLowerCase().includes(searchTerm) ||
         p.category.toLowerCase().includes(searchTerm) ||
-<<<<<<< HEAD
         (p.description && p.description.toLowerCase().includes(searchTerm))
-=======
-        p.description.toLowerCase().includes(searchTerm)
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
     );
 
     renderMarketplace(filtered);
@@ -427,25 +411,16 @@ function renderProductPage() {
     const suggestedProducts = productsData.filter(p => p.id !== product.id).slice(0, 4);
 
     let specsHTML = '';
-<<<<<<< HEAD
     if (product.specifications) {
         for (const [key, val] of Object.entries(product.specifications)) {
             specsHTML += `<div class="spec-row"><strong>${key}:</strong> <span>${val}</span></div>`;
         }
-=======
-    for (const [key, val] of Object.entries(product.specifications)) {
-        specsHTML += `<div class="spec-row"><strong>${key}:</strong> <span>${val}</span></div>`;
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
     }
 
     container.innerHTML = `
         <div class="product-detail-grid">
             <div class="viewport-3d-card">
-<<<<<<< HEAD
                 <div class="badge-stock">⚡ In Stock (${product.stock || 100} available)</div>
-=======
-                <div class="badge-stock">⚡ In Stock (${product.stock} available)</div>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                 <div class="interactive-canvas-wrapper" id="canvasContainer">
                     <img src="${product.image}" alt="${product.title}" class="detail-main-img" id="mainImg3D">
                     <div class="hint-3d">🖱️ Hover over image for 3D tilt preview</div>
@@ -462,33 +437,20 @@ function renderProductPage() {
                         <h4>🏪 Retailer & Origin Details</h4>
                         ${product.verifiedRetailer ? '<span class="verified-tag">✓ Verified Supplier</span>' : ''}
                     </div>
-<<<<<<< HEAD
                     <p><strong>Seller:</strong> ${product.seller || 'Verified Farmer'} (⭐ ${product.sellerRating || '4.8'} / 5.0)</p>
                     <p><strong>Location:</strong> ${product.sellerLocation || 'Local Farm'}</p>
-=======
-                    <p><strong>Seller:</strong> ${product.seller} (⭐ ${product.sellerRating || '4.8'} / 5.0)</p>
-                    <p><strong>Location:</strong> ${product.sellerLocation}</p>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                     <p><strong>Delivery Coverage:</strong> ${product.deliveryRadius || 'Regional Delivery'}</p>
                     <p><strong>Estimated Time:</strong> ${product.estimatedDeliveryDays || '2-3 Days'}</p>
                 </div>
 
                 <div class="description-box">
                     <h4>Description</h4>
-<<<<<<< HEAD
                     <p>${product.description || 'Fresh, high-quality farm produce direct from agricultural growers.'}</p>
-=======
-                    <p>${product.description}</p>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                 </div>
 
                 <div class="specs-box">
                     <h4>Specifications</h4>
-<<<<<<< HEAD
                     ${specsHTML || '<p style="color:var(--text-muted)">Standard agricultural grade verified.</p>'}
-=======
-                    ${specsHTML}
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                 </div>
 
                 <div class="delivery-calc-box">
@@ -516,11 +478,7 @@ function renderProductPage() {
                         <div class="product-details">
                             <span class="product-category">${item.category}</span>
                             <h4 class="product-title">${item.title}</h4>
-<<<<<<< HEAD
                             <div class="product-seller">📍 ${item.sellerLocation || 'Local Farm'}</div>
-=======
-                            <div class="product-seller">📍 ${item.sellerLocation}</div>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                             <div class="product-bottom">
                                 <span class="product-price">₹${item.price.toLocaleString('en-IN')}</span>
                                 <button class="btn-add" onclick="event.stopPropagation(); addToCart('${item.id}')">🛒 Add to Cart</button>
@@ -585,7 +543,6 @@ function switchAuthTab(tab) {
     }
 }
 
-<<<<<<< HEAD
 async function handleAuthSubmit(event, type) {
     event.preventDefault();
     
@@ -639,22 +596,6 @@ async function handleAuthSubmit(event, type) {
     
     alert(`${type} Successful as ${selectedRole.toUpperCase()}!`);
     
-=======
-function handleAuthSubmit(event, type) {
-    event.preventDefault();
-    
-    // Dropdown se selected role read karein
-    const roleSelect = document.getElementById("userRole");
-    const selectedRole = roleSelect ? roleSelect.value : "consumer";
-    
-    // LocalStorage mein session aur role save karein
-    localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("userRole", selectedRole);
-    
-    alert(`${type} Successful as ${selectedRole.toUpperCase()}!`);
-    
-    // Role based Redirection
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
     if (selectedRole === "farmer") {
         window.location.href = 'dashboard.html';
     } else {
@@ -686,7 +627,6 @@ window.addEventListener('scroll', () => {
 document.addEventListener('DOMContentLoaded', () => {
     updateCartBadge();
 });
-<<<<<<< HEAD
 
 // Fetch products added by Farmer and merge into marketplace display
 async function loadMarketplaceProducts() {
@@ -723,53 +663,12 @@ async function loadMarketplaceProducts() {
         }
     } catch (err) {
         console.log("Error loading dynamic products:", err);
-=======
-// Fetch products added by Farmer and display on Index page
-async function loadMarketplaceProducts() {
-    try {
-        const res = await fetch("http://127.0.0.1:8000/api/products");
-        const products = await res.json();
-
-        // Aapke index.html me jahan products ki list hai us container ki class/id
-        const productContainer = document.querySelector(".product-grid") || document.querySelector("#featuredListingsContainer");
-
-        if (productContainer && products.length > 0) {
-            products.forEach(p => {
-                const card = document.createElement("div");
-                card.className = "product-card";
-                card.innerHTML = `
-                    <div class="product-img">
-                        <img src="${p.image || 'https://via.placeholder.com/150'}" alt="${p.title}" style="width:100%; height:180px; object-fit:cover;">
-                    </div>
-                    <div class="product-details" style="padding: 10px;">
-                        <span class="category" style="font-size:12px; color:#666;">${p.category}</span>
-                        <h3 style="margin:5px 0;">${p.title}</h3>
-                        <p style="margin:5px 0; color:#555;">📍 ${p.location}</p>
-                        <h4 style="color:#2e7d32; margin:5px 0;">₹${p.price}</h4>
-                        <button style="background:#2e7d32; color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; width:100%; margin-top:8px;">
-                            🛒 Add To Cart
-                        </button>
-                    </div>
-                `;
-                productContainer.appendChild(card);
-            });
-        }
-    } catch (err) {
-        console.log("Error loading products:", err);
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
     }
 }
 
 document.addEventListener("DOMContentLoaded", loadMarketplaceProducts);
-<<<<<<< HEAD
 
 function logoutUser() {
     localStorage.clear();
     window.location.replace('login.html');
 }
-=======
-function logoutUser() {
-    localStorage.clear();
-    window.location.replace('login.html');
-}
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910

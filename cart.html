@@ -17,21 +17,14 @@
             <a href="consumer.html" class="logo">🌾 FarmDirect</a>
             <nav class="nav-links">
                 <a href="consumer.html">Marketplace</a>
-<<<<<<< HEAD
                 <a href="orders.html">My Orders</a>
-=======
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                 <button class="cart-btn" onclick="window.location.href='cart.html'">🛒 Cart</button>
             </nav>
         </div>
     </header>
 
     <main class="cart-page-container">
-<<<<<<< HEAD
         <h2 style="color: var(--primary); margin-bottom: 1rem;">🛒 Shopping Cart</h2>
-=======
-        <h2>Shopping Cart</h2>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
 
         <div class="cart-layout">
             <!-- Left Side: Cart Items List -->
@@ -43,7 +36,6 @@
             <div class="card" id="summaryCard" style="height: fit-content;">
                 <h3>Order Summary</h3>
                 <div class="summary-row">
-<<<<<<< HEAD
                     <span>Produce Subtotal</span>
                     <span>₹<span id="subTotal">0</span></span>
                 </div>
@@ -64,37 +56,6 @@
                     <a href="consumer.html" style="text-align: center; color: var(--primary); font-weight: 600; font-size: 0.9rem; text-decoration: none;">
                         ← Continue Shopping
                     </a>
-=======
-                    <span>Subtotal</span>
-                    <span>₹<span id="subTotal">0</span></span>
-                </div>
-                <div class="summary-row">
-                    <span>Delivery Fee</span>
-                    <span style="color: var(--primary-light); font-weight: bold;">FREE</span>
-                </div>
-                <hr class="divider">
-                <div class="summary-row total-row">
-                    <span>Total</span>
-                    <span>₹<span id="grandTotal">0</span></span>
-                </div>
-
-                <div class="payment-section">
-                    <h4 style="margin-bottom: 0.5rem;">Select Payment Method</h4>
-                    <div class="payment-options">
-                        <label class="payment-option">
-                            <input type="radio" name="paymentMethod" value="upi" checked>
-                            <span>UPI / QR Code</span>
-                        </label>
-                        <label class="payment-option">
-                            <input type="radio" name="paymentMethod" value="cod">
-                            <span>Cash on Delivery (COD)</span>
-                        </label>
-                    </div>
-
-                    <button class="btn-submit" onclick="processOrder()" style="width: 100%; margin-top: 1.2rem; cursor: pointer;">
-                        Place Direct Order
-                    </button>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                 </div>
             </div>
         </div>
@@ -107,7 +68,6 @@
     <script>
         document.addEventListener("DOMContentLoaded", renderCartPage);
 
-<<<<<<< HEAD
         function getUnifiedCart() {
             return JSON.parse(localStorage.getItem('cartItems')) || JSON.parse(localStorage.getItem('farmCart')) || [];
         }
@@ -119,24 +79,14 @@
 
         function renderCartPage() {
             const cart = getUnifiedCart();
-=======
-        function renderCartPage() {
-            const cart = JSON.parse(localStorage.getItem('farmCart')) || [];
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
             const cartItemsList = document.getElementById("cartItemsList");
             const summaryCard = document.getElementById("summaryCard");
 
             if (cart.length === 0) {
-<<<<<<< HEAD
                 cartItemsList.innerHTML = `<div style="text-align: center; padding: 3rem; background: #fff; border-radius: 12px; border: 1px dashed var(--border);">
                     <h3>Your Cart is Currently Empty 🛒</h3>
                     <p style="margin-top: 10px; color: var(--text-muted);">Fresh harvest straight from farmers is waiting for you.</p>
                     <a href="consumer.html" class="btn-submit" style="display: inline-block; margin-top: 1rem; text-decoration: none;">Explore Available Produce</a>
-=======
-                cartItemsList.innerHTML = `<div style="text-align: center; padding: 2rem;">
-                    <h3>Your Cart is Currently Empty 🛒</h3>
-                    <p style="margin-top: 10px;"><a href="consumer.html" style="color: var(--primary); font-weight: bold;">Click here</a> to explore available produce.</p>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                 </div>`;
                 if(summaryCard) summaryCard.style.display = "none";
                 return;
@@ -145,7 +95,6 @@
             if(summaryCard) summaryCard.style.display = "block";
 
             let html = "";
-<<<<<<< HEAD
             let subtotal = 0;
 
             cart.forEach((item, index) => {
@@ -166,23 +115,6 @@
                             <span style="font-weight: 600; min-width: 24px; text-align: center;">${qty}</span>
                             <button class="btn-qty" onclick="changeQuantity(${index}, 1)">+</button>
                             <strong style="margin: 0 12px; color: var(--primary);">₹${itemTotal}</strong>
-=======
-            let total = 0;
-
-            cart.forEach((item, index) => {
-                const itemTotal = item.price * (item.quantity || 1);
-                total += itemTotal;
-
-                html += `
-                    <div class="cart-item-card">
-                        <img src="${item.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e'}" class="cart-item-img" alt="${item.title}">
-                        <div class="cart-item-info">
-                            <div class="cart-item-title">${item.title}</div>
-                            <div class="cart-item-price">₹${item.price} × ${item.quantity || 1}</div>
-                        </div>
-                        <div class="cart-qty-controls">
-                            <strong style="margin-right: 10px; color: var(--primary);">₹${itemTotal}</strong>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                             <button class="btn-remove" onclick="removeItem(${index})">Remove</button>
                         </div>
                     </div>
@@ -190,7 +122,6 @@
             });
 
             cartItemsList.innerHTML = html;
-<<<<<<< HEAD
             const deliveryFee = 50;
             document.getElementById("subTotal").innerText = subtotal;
             document.getElementById("grandTotal").innerText = (subtotal + deliveryFee);
@@ -217,25 +148,3 @@
     </script>
 </body>
 </html>
-=======
-            document.getElementById("subTotal").innerText = total;
-            document.getElementById("grandTotal").innerText = total;
-        }
-
-        function removeItem(index) {
-            let cart = JSON.parse(localStorage.getItem('farmCart')) || [];
-            cart.splice(index, 1);
-            localStorage.setItem('farmCart', JSON.stringify(cart));
-            renderCartPage();
-        }
-
-        function processOrder() {
-            const method = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'upi';
-            alert(`Order Placed Successfully via ${method.toUpperCase()}! Thank you for supporting direct farming.`);
-            localStorage.removeItem('farmCart');
-            window.location.href = 'consumer.html';
-        }
-    </script>
-</body>
-</html>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910

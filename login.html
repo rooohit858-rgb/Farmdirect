@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
     <title>Authentication | FarmDirect</title>
-=======
-    <title>Farmer Authentication | FarmDirect</title>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
@@ -17,11 +13,7 @@
 
     <div class="auth-card-3d" id="auth3dCard">
         <div class="auth-header">
-<<<<<<< HEAD
             <a href="home.html" class="auth-logo">🌾 FarmDirect</a>
-=======
-            <a href="index.html" class="auth-logo">🌾 FarmDirect</a>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
             <p>Access your agricultural trade account</p>
         </div>
 
@@ -34,11 +26,7 @@
         <form id="loginForm" class="auth-form" onsubmit="handleLoginSubmit(event)">
             <div class="form-group">
                 <label>Email Address</label>
-<<<<<<< HEAD
                 <input type="email" id="loginEmail" class="form-control" placeholder="user@farmdirect.com" required>
-=======
-                <input type="email" id="loginEmail" class="form-control" placeholder="farmer@agri.com" required>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
             </div>
             <div class="form-group">
                 <label>Password</label>
@@ -59,11 +47,7 @@
             </div>
             <div class="form-group">
                 <label>Email Address</label>
-<<<<<<< HEAD
                 <input type="email" id="signupEmail" class="form-control" placeholder="user@farmdirect.com" required>
-=======
-                <input type="email" id="signupEmail" class="form-control" placeholder="farmer@agri.com" required>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
             </div>
             <div class="form-group">
                 <label>Create Password</label>
@@ -120,11 +104,7 @@
         // Handle Login Submission
         async function handleLoginSubmit(e) {
             e.preventDefault();
-<<<<<<< HEAD
             const email = document.getElementById('loginEmail').value.trim();
-=======
-            const email = document.getElementById('loginEmail').value;
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
             const password = document.getElementById('loginPassword').value;
 
             try {
@@ -137,7 +117,6 @@
                 const data = await response.json();
 
                 if (response.ok && data.status === 'success') {
-<<<<<<< HEAD
                     localStorage.setItem('isLoggedIn', 'true');
                     localStorage.setItem('userRole', data.user.role || 'consumer');
                     localStorage.setItem('userName', data.user.name || email.split('@')[0]);
@@ -146,13 +125,6 @@
                     if (data.user.location) localStorage.setItem('userLocation', data.user.location);
 
                     alert('Login Successful! Welcome, ' + (data.user.name || 'User'));
-=======
-                    localStorage.setItem('userRole', data.user.role);
-                    localStorage.setItem('userName', data.user.name);
-                    localStorage.setItem('userEmail', data.user.email);
-
-                    alert('Login Successful!');
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                     
                     const role = (data.user.role || '').toLowerCase();
                     if (role === 'farmer') {
@@ -165,7 +137,6 @@
                 }
             } catch (err) {
                 console.error('Login Error:', err);
-<<<<<<< HEAD
                 // Offline fallback login for seamless testing
                 const roleParam = new URLSearchParams(window.location.search).get('role') || 'consumer';
                 localStorage.setItem('isLoggedIn', 'true');
@@ -174,9 +145,6 @@
                 localStorage.setItem('userEmail', email);
                 alert('Offline Mode: Logged in as ' + roleParam.toUpperCase());
                 window.location.replace(roleParam === 'farmer' ? 'dashboard.html' : 'consumer.html');
-=======
-                alert('Server se connect nahi ho pa raha!');
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
             }
         }
 
@@ -184,7 +152,6 @@
         document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-<<<<<<< HEAD
             const nameEl = document.getElementById('signupName');
             const emailEl = document.getElementById('signupEmail');
             const passEl = document.getElementById('signupPassword');
@@ -198,18 +165,6 @@
                 role: roleEl ? roleEl.value.trim().toLowerCase() : "consumer",
                 phone: phoneEl ? phoneEl.value.trim() : "",
                 location: "India"
-=======
-            const nameEl = document.getElementById('signupName') || document.querySelector('#signupForm input[type="text"]');
-            const emailEl = document.getElementById('signupEmail') || document.querySelector('#signupForm input[type="email"]');
-            const passEl = document.getElementById('signupPassword') || document.querySelector('#signupForm input[type="password"]');
-            const roleEl = document.getElementById('userRole') || document.querySelector('#signupForm select');
-
-            const payload = {
-                name: nameEl ? nameEl.value.trim() : "Farmer User",
-                email: emailEl ? emailEl.value.trim() : "",
-                password: passEl ? passEl.value : "",
-                role: roleEl ? roleEl.value.trim() : "farmer"
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
             };
 
             try {
@@ -222,7 +177,6 @@
                 const data = await response.json();
 
                 if (response.ok && data.status === 'success') {
-<<<<<<< HEAD
                     localStorage.setItem('isLoggedIn', 'true');
                     localStorage.setItem('userRole', payload.role);
                     localStorage.setItem('userName', payload.name);
@@ -230,13 +184,6 @@
                     if (payload.phone) localStorage.setItem('userPhone', payload.phone);
 
                     alert('Registration Successful! Welcome, ' + payload.name);
-=======
-                    localStorage.setItem('userRole', payload.role);
-                    localStorage.setItem('userName', payload.name);
-                    localStorage.setItem('userEmail', payload.email);
-
-                    alert('Registration Successful! Name: ' + payload.name);
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
 
                     const role = payload.role.toLowerCase();
                     if (role === 'farmer') {
@@ -245,7 +192,6 @@
                         window.location.replace('consumer.html');
                     }
                 } else {
-<<<<<<< HEAD
                     alert('Registration Failed: ' + (data.message || 'Error occurred'));
                 }
             } catch (err) {
@@ -256,19 +202,8 @@
                 localStorage.setItem('userEmail', payload.email);
                 alert('Offline Mode: Registered as ' + payload.role.toUpperCase());
                 window.location.replace(payload.role === 'farmer' ? 'dashboard.html' : 'consumer.html');
-=======
-                    alert('Registration Failed: ' + (data.message || 'Koyi error aayi hai'));
-                }
-            } catch (err) {
-                console.error('Fetch Error:', err);
-                alert('Server se connect nahi ho pa raha!');
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
             }
         });
     </script>
 </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> 89c46436020675f4d3346c0689f900a33910b910
