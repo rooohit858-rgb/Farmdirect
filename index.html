@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmDirect | Farmer & Agricultural Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        const userRole = localStorage.getItem('userRole');
+        if (!userRole || userRole.toLowerCase() !== 'farmer') {
+            // Check if user is logged in as another role, otherwise redirect to login
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.href = 'login.html?role=farmer';
+            }
+        }
+    </script>
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            color: white;
+            padding: 4rem 1.5rem;
+            text-align: center;
+            border-radius: 0 0 24px 24px;
+        }
+        .hero-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        .hero-subtitle {
+            font-size: 1.1rem;
+            max-width: 650px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+        .hero-btns {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-primary-custom {
+            background: #ffb300;
+            color: #000;
+            padding: 0.8rem 1.8rem;
+            border-radius: 8px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        .btn-secondary-custom {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+        }
+        .home-container {
+            max-width: 1100px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+        .farmer-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .farmer-action-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 1.8rem;
+            text-align: left;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .farmer-action-card:hover {
+            border-color: #2e7d32;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1b5e20;
+            margin-bottom: 0.5rem;
+        }
+        .card-desc {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
+            line-height: 1.4;
+        }
+        .action-link {
+            display: inline-block;
+            background: #2e7d32;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 3rem;
+        }
+        .stat-card {
+            background: var(--surface, #fff);
+            border: 1px solid var(--border, #e0e0e0);
+            padding: 1.2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary, #2e7d32);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">🌾 FarmDirect</a>
+            <nav class="nav-links">
+                <a href="index.html" class="active">Home</a>
+                <a href="dashboard.html">Farmer Dashboard & AI Mandi</a>
+                <a href="logistics.html">🚚 Route Optimizer</a>
+                <a href="consumer.html">Marketplace (Buyer)</a>
+                <a href="login.html" class="btn-login btn-auth" id="authNavBtn">Login / Register</a>
+            </nav>
+            <button onclick="toggleProfile()" style="background: #2e7d32; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                👤 My Profile
+            </button>
+        </div>
+    </header>
+
+    <!-- Profile Modal Popup -->
+    <div id="profileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 16px; width: 350px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); font-family: sans-serif;">
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="width: 70px; height: 70px; background: #e8f5e9; color: #2e7d32; border-radius: 50%; font-size: 32px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto; border: 2px solid #2e7d32;">
+                    👤
+                </div>
+                <h3 id="profName" style="margin: 0; color: #1b5e20; font-size: 20px;">User Name</h3>
+                <span id="profRoleBadge" style="background: #2e7d32; color: white; padding: 2px 10px; border-radius: 12px; font-size: 12px; text-transform: uppercase; font-weight: bold; margin-top: 5px; display: inline-block;">FARMER</span>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #eee; margin-bottom: 15px;">
+
+            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: #333;">
+                <div>📧 <strong>Email:</strong> <span id="profEmail" style="float: right; color: #555;">-</span></div>
+                <div>📞 <strong>Phone:</strong> <span id="profPhone" style="float: right; color: #555;">-</span></div>
+                <div>📍 <strong>Location:</strong> <span id="profLocation" style="float: right; color: #555;">-</span></div>
+                <div>📅 <strong>Member Since:</strong> <span id="profJoined" style="float: right; color: #555;">-</span></div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0 15px 0;">
+
+            <div style="display: flex; gap: 10px; justify-content: space-between;">
+                <button onclick="logoutUser()" style="flex: 1; background: #d32f2f; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold;">Logout</button>
+                <button onclick="toggleProfile()" style="flex: 1; background: #757575; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Banner -->
+    <section class="hero-section">
+        <h1 class="hero-title">Empowering Farmers With Direct Trade</h1>
+        <p class="hero-subtitle">Sell your harvest directly to consumers, manage your listed products, and access real-time AI Mandi rates with zero middleman fees.</p>
+        <div class="hero-btns">
+            <a href="dashboard.html" class="btn-primary-custom">➕ Add New Crop Item</a>
+            <a href="dashboard.html" class="btn-secondary-custom">🤖 AI Mandi Predictor</a>
+        </div>
+    </section>
+
+    <main class="home-container">
+
+        <!-- Platform Benefits -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div>Direct Farmer Profit</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0%</div>
+                <div>Middleman Commission</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">Live</div>
+                <div>APMC Mandi Rates</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div>Direct Buyer Reach</div>
+            </div>
+        </div>
+
+        <!-- Farmer Action Modules -->
+        <h3 style="margin-bottom: 0.3rem;">Farmer Portal Quick Access</h3>
+        <p style="color: #666; margin-bottom: 1.5rem;">Select an action below to manage your produce listings or check market rates.</p>
+
+        <div class="farmer-actions-grid">
+            
+            <!-- Card 1: Add New Product -->
+            <div class="farmer-action-card">
+                <div>
+                    <span class="card-icon">➕</span>
+                    <div class="card-title">Add Produce / Crops</div>
+                    <p class="card-desc">List your fresh harvest, fruits, vegetables, or grains for direct sale to buyers.</p>
+                </div>
+                <a href="dashboard.html" class="action-link">List New Item &rarr;</a>
+            </div>
+
+            <!-- Card 2: My Products -->
+            <div class="farmer-action-card">
+                <div>
+                    <span class="card-icon">📦</span>
+                    <div class="card-title">My Products</div>
+                    <p class="card-desc">View, edit, or manage all your currently active crop listings and stock levels.</p>
+                </div>
+                <a href="dashboard.html" class="action-link">View My Inventory &rarr;</a>
+            </div>
+
+            <!-- Card 3: AI Mandi Predictor -->
+            <div class="farmer-action-card">
+                <div>
+                    <span class="card-icon">🤖</span>
+                    <div class="card-title">AI Mandi Price Advisor</div>
+                    <p class="card-desc">Check real-time state and district mandi rates before fixing your selling price.</p>
+                </div>
+                <a href="dashboard.html" class="action-link">Check Mandi Rates &rarr;</a>
+            </div>
+
+            <!-- Card 4: Agri-Logistics & Route Optimizer -->
+            <div class="farmer-action-card">
+                <div>
+                    <span class="card-icon">🚚</span>
+                    <div class="card-title">Multi-Farm Route Optimizer</div>
+                    <p class="card-desc">Plan optimal multi-farm pickup sequences, cut carrier freight costs, and safeguard cold-chain produce.</p>
+                </div>
+                <a href="logistics.html" class="action-link" style="background: #16a34a;">Optimize Delivery Routes &rarr;</a>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 FarmDirect. Empowering Agriculture with Direct Peer-to-Peer Trading.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+    function toggleProfile() {
+        const modal = document.getElementById('profileModal');
+        if (modal.style.display === 'none' || modal.style.display === '') {
+            document.getElementById('profName').innerText = localStorage.getItem('userName') || 'Farmer Partner';
+            document.getElementById('profEmail').innerText = localStorage.getItem('userEmail') || 'farmer@farmdirect.com';
+            document.getElementById('profPhone').innerText = localStorage.getItem('userPhone') || '+91 9876543210';
+            document.getElementById('profLocation').innerText = localStorage.getItem('userLocation') || 'Punjab Agro Center';
+            document.getElementById('profJoined').innerText = localStorage.getItem('joinedDate') || 'Sep 2026';
+            
+            const role = localStorage.getItem('userRole') || 'Farmer';
+            document.getElementById('profRoleBadge').innerText = role.toUpperCase();
+
+            modal.style.display = 'flex';
+        } else {
+            modal.style.display = 'none';
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const userName = localStorage.getItem('userName');
+        if (userName) {
+            const authBtn = document.getElementById('authNavBtn');
+            if (authBtn) {
+                authBtn.innerText = `👋 ${userName}`;
+                authBtn.href = "javascript:void(0)";
+                authBtn.onclick = toggleProfile;
+            }
+        }
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumer Marketplace | FarmDirect Direct Agri Trade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .consumer-header-actions { display: flex; align-items: center; gap: 1rem; }
+        .badge-fpo { background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; }
+        .fpo-banner-section { max-width: 1280px; margin: 2rem auto 1rem; padding: 0 1.5rem; }
+        .fpo-banner-card { background: linear-gradient(135deg, #1b5e20, #2d6a4f); color: white; border-radius: var(--radius-lg); padding: 1.8rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; box-shadow: var(--shadow-3d); }
+        .fpo-banner-btn { background: var(--accent); color: var(--text-primary); padding: 0.7rem 1.4rem; border-radius: var(--radius-sm); font-weight: 700; text-decoration: none; transition: transform 0.2s; white-space: nowrap; }
+        .fpo-banner-btn:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header>
+        <div class="nav-container">
+            <a href="consumer.html" class="logo">🌾 FarmDirect</a>
+            
+            <nav class="nav-links">
+                <a href="consumer.html" class="active">Marketplace</a>
+                <a href="#fpo-showcase">FPO Bulk Hub</a>
+                <a href="logistics.html">🚚 Route Optimizer</a>
+                <a href="orders.html">My Orders</a>
+
+                <!-- Header Search Bar -->
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="headerSearchInput" placeholder="Search wheat, tomato, milk..." onkeyup="searchProducts(this.value)">
+                </div>
+                
+                <!-- Auth / Profile Buttons -->
+                <div class="auth-group" id="authNavContainer">
+                    <a href="login.html?mode=login" class="btn-auth btn-login" id="loginBtn">Log In</a>
+                    <a href="login.html?mode=signup" class="btn-auth btn-signup" id="signupBtn">Sign Up</a>
+                </div>
+
+                <button class="cart-btn" onclick="window.location.href='cart.html'">🛒 Cart (<span id="cart-count">0</span>)</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 3D Hero Parallax Section -->
+    <section class="hero-parallax">
+        <div class="hero-content" id="heroContent">
+            <h1>Direct Agricultural Marketplace</h1>
+            <p>Procure farm-fresh crops, vegetables, fruits, and dairy directly from local growers and registered Farmer Producer Organisations (FPOs) with zero middleman markups.</p>
+            <div class="hero-actions">
+                <a href="#marketplace" class="btn-hero primary">Browse Fresh Harvest</a>
+                <a href="#fpo-showcase" class="btn-hero secondary">FPO Wholesale Hub</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FPO Banner Showcase -->
+    <section class="fpo-banner-section" id="fpo-showcase">
+        <div class="fpo-banner-card">
+            <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                    <span style="font-size: 1.3rem;">🏛️</span>
+                    <h3 style="margin: 0; font-size: 1.3rem; font-family: var(--font-heading);">Farmer Producer Organisations (FPO) Collective</h3>
+                </div>
+                <p style="margin: 0; opacity: 0.9; font-size: 0.95rem; max-width: 700px;">
+                    Are you a restaurant, retailer, or bulk buyer? Source directly from verified FPOs representing 1,000+ smallholder farmers with transparent farm-gate pricing.
+                </p>
+            </div>
+            <a href="javascript:void(0)" onclick="filterByFpo()" class="fpo-banner-btn">View FPO Supply Lots &rarr;</a>
+        </div>
+    </section>
+
+    <!-- Symmetrical Marketplace Container -->
+    <div class="container" id="marketplace">
+        <aside class="sidebar">
+            <div class="card">
+                <h3>Filter Marketplace</h3>
+                <div class="filter-group" style="margin-top: 1rem;">
+                    <label for="category-filter" style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem;">Category</label>
+                    <select id="category-filter" class="form-control" onchange="filterProducts()">
+                        <option value="all">All Items</option>
+                        <option value="Grains & Feed">Grains, Feed & Hay</option>
+                        <option value="Vegetables">Fresh Vegetables</option>
+                        <option value="Fruits">Fresh Fruits</option>
+                        <option value="Dairy & Meat">Dairy & Animal Products</option>
+                    </select>
+                </div>
+
+                <hr class="divider" style="margin: 1.5rem 0;">
+
+                <div style="font-size: 0.85rem; color: var(--text-muted);">
+                    <p style="margin-bottom: 8px;">🛡️ <strong>Direct Trade Guarantee:</strong></p>
+                    <p>Every purchase sends 100% of the farm value directly to verified farmers and FPOs.</p>
+                </div>
+            </div>
+        </aside>
+
+        <main>
+            <div class="marketplace-header">
+                <h3>Featured Produce Listings</h3>
+                <span id="resultsCount" class="results-count">Showing Items</span>
+            </div>
+            <!-- Standardized Symmetrical Grid -->
+            <div class="products-grid" id="productGrid">
+                <!-- Products loaded dynamically via script.js -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Profile Modal Popup -->
+    <div id="profileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 16px; width: 350px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); font-family: sans-serif;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="width: 70px; height: 70px; background: #e8f5e9; color: #2e7d32; border-radius: 50%; font-size: 32px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto; border: 2px solid #2e7d32;">
+                    👤
+                </div>
+                <h3 id="profName" style="margin: 0; color: #1b5e20; font-size: 20px;">User Name</h3>
+                <span id="profRoleBadge" style="background: #1565c0; color: white; padding: 2px 10px; border-radius: 12px; font-size: 12px; text-transform: uppercase; font-weight: bold; margin-top: 5px; display: inline-block;">CONSUMER</span>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #eee; margin-bottom: 15px;">
+
+            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: #333;">
+                <div>📧 <strong>Email:</strong> <span id="profEmail" style="float: right; color: #555;">-</span></div>
+                <div>📞 <strong>Phone:</strong> <span id="profPhone" style="float: right; color: #555;">-</span></div>
+                <div>📦 <strong>Orders Placed:</strong> <a href="orders.html" style="float: right; color: #2e7d32; font-weight: bold;">View History</a></div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0 15px 0;">
+
+            <div style="display: flex; gap: 10px; justify-content: space-between;">
+                <button onclick="logoutUser()" style="flex: 1; background: #d32f2f; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold;">Logout</button>
+                <button onclick="toggleConsumerProfile()" style="flex: 1; background: #757575; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 FarmDirect. Empowering Agriculture with Direct Peer-to-Peer Trading & FPO Networks.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderMarketplace === 'function') {
+                renderMarketplace();
+            }
+            updateCartBadge();
+            syncAuthUI();
+        });
+
+        function syncAuthUI() {
+            const userName = localStorage.getItem('userName');
+            const authContainer = document.getElementById('authNavContainer');
+            if (userName && authContainer) {
+                authContainer.innerHTML = `
+                    <button onclick="toggleConsumerProfile()" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                        👤 ${userName}
+                    </button>
+                `;
+            }
+        }
+
+        function toggleConsumerProfile() {
+            const modal = document.getElementById('profileModal');
+            if (modal.style.display === 'none' || modal.style.display === '') {
+                document.getElementById('profName').innerText = localStorage.getItem('userName') || 'Buyer Account';
+                document.getElementById('profEmail').innerText = localStorage.getItem('userEmail') || 'buyer@farmdirect.com';
+                document.getElementById('profPhone').innerText = localStorage.getItem('userPhone') || '+91 9876543210';
+                const role = (localStorage.getItem('userRole') || 'Consumer').toUpperCase();
+                document.getElementById('profRoleBadge').innerText = role;
+                modal.style.display = 'flex';
+            } else {
+                modal.style.display = 'none';
+            }
+        }
+
+        function filterByFpo() {
+            const filtered = productsData.filter(p => 
+                p.category === 'Grains & Feed' || 
+                (p.seller && p.seller.toLowerCase().includes('co-op')) ||
+                (p.seller && p.seller.toLowerCase().includes('mills'))
+            );
+            renderMarketplace(filtered);
+            const title = document.querySelector('.marketplace-header h3');
+            if(title) title.innerText = "🏛️ FPO & Collective Bulk Supply Listings";
+            window.location.hash = "marketplace";
+        }
+    </script>
+</body>
+</html>

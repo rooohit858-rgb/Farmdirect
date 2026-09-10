@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agri-Logistics & Route Optimizer | FarmDirect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Leaflet.js for Interactive Map Visualizer (Free, Open-Source) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        .logistics-container { max-width: 1320px; margin: 2rem auto 4rem; padding: 0 1.5rem; }
+        .logistics-grid { display: grid; grid-template-columns: 420px 1fr; gap: 2rem; }
+        
+        #routeMap {
+            height: 520px;
+            width: 100%;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            z-index: 1;
+        }
+
+        .metric-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .metric-card {
+            background: white;
+            padding: 1.2rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .metric-card.highlight {
+            background: #f0fdf4;
+            border-color: #86efac;
+        }
+        .metric-val {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 4px 0;
+        }
+        .metric-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .itinerary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.88rem;
+        }
+        .itinerary-table th, .itinerary-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+        .itinerary-table th {
+            background: #f8faf6;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .stop-pill {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            line-height: 22px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.75rem;
+            color: white;
+        }
+        .pill-origin { background: #16a34a; }
+        .pill-waypoint { background: #d97706; }
+        .pill-dest { background: #2563eb; }
+
+        .form-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .waypoint-item {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .btn-remove-stop {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .saved-route-chip {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .saved-route-chip:hover {
+            border-color: var(--primary);
+            background: #f4fbf7;
+            transform: translateX(4px);
+        }
+
+        @media (max-width: 960px) {
+            .logistics-grid { grid-template-columns: 1fr; }
+            .metric-cards-grid { grid-template-columns: repeat(2, 1fr); }
+            #routeMap { height: 380px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <a href="consumer.html" class="logo">🌾 FarmDirect</a>
+            <nav class="nav-links">
+                <a href="consumer.html">Marketplace</a>
+                <a href="dashboard.html">Farmer Portal</a>
+                <a href="logistics.html" class="active">🚚 Route Optimizer</a>
+                <a href="orders.html">My Orders</a>
+                <button class="cart-btn" onclick="window.location.href='cart.html'">🛒 Cart</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="logistics-container">
+        <!-- Page Header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.8rem;">
+            <div>
+                <div style="display: inline-flex; align-items: center; gap: 6px; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 6px;">
+                    ⚡ AI Multimodal Route Optimization
+                </div>
+                <h1 style="color: var(--primary); margin: 0; font-size: 2rem;">Agri-Logistics & Multi-Farm Dispatch</h1>
+                <p style="color: var(--text-muted); margin-top: 4px; font-size: 0.95rem;">
+                    Pool harvests across multiple farm gates, sequence optimal stops, safeguard cold-chain perishables, and slash transport costs.
+                </p>
+            </div>
+            <div>
+                <a href="dashboard.html" class="btn-auth btn-login" style="background: #ffffff; color: var(--primary); border: 1px solid var(--primary);">← Farmer Dashboard</a>
+            </div>
+        </div>
+
+        <div class="logistics-grid">
+            <!-- Left Panel: Route Configuration -->
+            <div class="form-card">
+                <h3 style="color: var(--primary); margin-bottom: 1rem;">📍 Route & Dispatch Setup</h3>
+                
+                <form id="routeForm" onsubmit="handleRouteOptimization(event)">
+                    <!-- Starting Point -->
+                    <div class="form-group" style="margin-bottom: 0.8rem;">
+                        <label style="font-size: 0.85rem; font-weight: 600;">1. Origin / Primary Farm Gate</label>
+                        <select id="originSelect" class="form-control" required>
+                            <!-- Populated via API -->
+                        </select>
+                    </div>
+
+                    <!-- Multi-Farm Waypoints (Intermediate Stops) -->
+                    <div class="form-group" style="margin-bottom: 0.8rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-size: 0.85rem; font-weight: 600;">2. Farm Pickup Stops (Waypoints)</label>
+                            <button type="button" onclick="addWaypointInput()" style="background: none; border: none; color: var(--primary); font-size: 0.8rem; font-weight: bold; cursor: pointer;">
+                                + Add Stop
+                            </button>
+                        </div>
+                        <div id="waypointsContainer">
+                            <!-- Dynamic pickup stops added here -->
+                        </div>
+                    </div>
+
+                    <!-- Final Destination -->
+                    <div class="form-group" style="margin-bottom: 0.8rem;">
+                        <label style="font-size: 0.85rem; font-weight: 600;">3. Destination Mandi / Delivery Hub</label>
+                        <select id="destSelect" class="form-control" required>
+                            <!-- Populated via API -->
+                        </select>
+                    </div>
+
+                    <!-- Vehicle & Cargo Options -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 0.8rem;">
+                        <div class="form-group">
+                            <label style="font-size: 0.85rem; font-weight: 600;">Carrier Vehicle</label>
+                            <select id="vehicleSelect" class="form-control">
+                                <option value="Refrigerated Reefer (1.5 Ton)">Reefer Van 1.5T (₹22/km)</option>
+                                <option value="Electric 3W Cargo (500 Kg)">Electric 3W Cargo (₹14/km)</option>
+                                <option value="Heavy Mandi Cargo Truck (5 Ton)">Heavy Truck 5T (₹35/km)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 0.85rem; font-weight: 600;">Cargo Type</label>
+                            <select id="cargoSelect" class="form-control">
+                                <option value="Perishable Produce (Tomatoes, Veggies, Fruits)">Fresh Produce / Veggies</option>
+                                <option value="Pure Dairy & Chilled Milk">Fresh Milk & Dairy</option>
+                                <option value="Dry Grains, Wheat & Basmati Rice">Dry Grains & Feed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btnOptimize" class="btn-submit" style="width: 100%; padding: 0.85rem; font-size: 1rem; margin-top: 0.6rem; cursor: pointer;">
+                        ⚡ Calculate AI Optimal Route
+                    </button>
+                </form>
+
+                <hr class="divider" style="margin: 1.5rem 0;">
+
+                <h4 style="color: var(--primary); margin-bottom: 0.6rem; font-size: 0.95rem;">🕒 Recently Dispatched Routes</h4>
+                <div id="recentRoutesContainer">
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Loading dispatches...</p>
+                </div>
+            </div>
+
+            <!-- Right Panel: Map & Analytics Scorecard -->
+            <div>
+                <!-- Leaflet Interactive Map -->
+                <div id="routeMap"></div>
+
+                <!-- KPI Metric Scorecards -->
+                <div class="metric-cards-grid" id="metricsRow" style="display: none;">
+                    <div class="metric-card highlight">
+                        <div class="metric-sub">Distance Saved</div>
+                        <div class="metric-val" id="valDistSaved">0 km</div>
+                        <div class="metric-sub" id="valDistPercent" style="color: #16a34a; font-weight: bold;">(0% Detour Cut)</div>
+                    </div>
+
+                    <div class="metric-card highlight">
+                        <div class="metric-sub">Freight Cost Saved</div>
+                        <div class="metric-val" id="valCostSaved">₹0</div>
+                        <div class="metric-sub" id="valTotalCost">Total Cost: ₹0</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-sub">Estimated Transit Time</div>
+                        <div class="metric-val" id="valDuration">0 hrs</div>
+                        <div class="metric-sub">Average Speed: 44 km/h</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-sub">Cold-Chain Temperature</div>
+                        <div class="metric-val" id="valTemp" style="font-size: 1.1rem;">4°C - 7°C</div>
+                        <div class="metric-sub" style="color: #2563eb; font-weight: bold;">❄️ Reefer Active</div>
+                    </div>
+                </div>
+
+                <!-- Detailed Step-by-Step Waypoint Itinerary -->
+                <div class="form-card" id="itineraryCard" style="margin-top: 1.5rem; display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="color: var(--primary); margin: 0;">📋 Step-by-Step Waypoint Sequence (<span id="itineraryRouteCode">FD-000</span>)</h4>
+                        <button onclick="bookThisDispatch()" style="background: #16a34a; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                            🚚 Confirm & Assign Carrier
+                        </button>
+                    </div>
+
+                    <table class="itinerary-table">
+                        <thead>
+                            <tr>
+                                <th>Stop</th>
+                                <th>Location</th>
+                                <th>Stage / Role</th>
+                                <th>Cumulative Distance</th>
+                                <th>Est. Arrival</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itineraryTableBody">
+                            <!-- Dynamic steps -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 FarmDirect. Multi-Farm Cold-Chain Route Optimization Engine.</p>
+    </footer>
+
+    <script>
+        let map;
+        let routeLayerGroup;
+        let availableLocations = [];
+        let currentOptimizedResult = null;
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            initMap();
+            await loadLocations();
+            loadRecentRoutes();
+        });
+
+        function initMap() {
+            // Default center around Northern / Central India agriculture belt
+            map = L.map('routeMap').setView([26.9124, 75.7873], 6);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: '© OpenStreetMap contributors | FarmDirect GIS'
+            }).addTo(map);
+
+            routeLayerGroup = L.layerGroup().addTo(map);
+        }
+
+        async function loadLocations() {
+            try {
+                const res = await fetch('/api/logistics/locations');
+                availableLocations = await res.json();
+
+                const originSelect = document.getElementById("originSelect");
+                const destSelect = document.getElementById("destSelect");
+
+                originSelect.innerHTML = "";
+                destSelect.innerHTML = "";
+
+                availableLocations.forEach((loc, idx) => {
+                    const opt1 = document.createElement("option");
+                    opt1.value = loc.name;
+                    opt1.innerText = `${loc.name} (${loc.state} - ${loc.type})`;
+                    originSelect.appendChild(opt1);
+
+                    const opt2 = document.createElement("option");
+                    opt2.value = loc.name;
+                    opt2.innerText = `${loc.name} (${loc.state} - ${loc.type})`;
+                    destSelect.appendChild(opt2);
+                });
+
+                // Set sensible default selections
+                if (availableLocations.length > 5) {
+                    originSelect.selectedIndex = 1; // Jagraon Dairy Belt
+                    destSelect.selectedIndex = 5;   // Azadpur Terminal Mandi Delhi
+                }
+
+                // Add 2 default intermediate stops
+                addWaypointInput("Khanna Grain Mandi");
+                addWaypointInput("Ambala Produce Mandi");
+
+            } catch (err) {
+                console.error("Failed to load locations:", err);
+            }
+        }
+
+        function addWaypointInput(preselectedName = "") {
+            const container = document.getElementById("waypointsContainer");
+            const div = document.createElement("div");
+            div.className = "waypoint-item";
+
+            let selectHtml = `<select class="form-control wp-select" style="flex-grow: 1;">`;
+            availableLocations.forEach(loc => {
+                const isSelected = preselectedName && loc.name.toLowerCase() === preselectedName.toLowerCase() ? "selected" : "";
+                selectHtml += `<option value="${loc.name}" ${isSelected}>📍 ${loc.name} (${loc.type})</option>`;
+            });
+            selectHtml += `</select>`;
+
+            div.innerHTML = `
+                ${selectHtml}
+                <button type="button" class="btn-remove-stop" onclick="this.parentElement.remove()">✕</button>
+            `;
+            container.appendChild(div);
+        }
+
+        async function handleRouteOptimization(e) {
+            e.preventDefault();
+
+            const origin = document.getElementById("originSelect").value;
+            const destination = document.getElementById("destSelect").value;
+            const vehicle = document.getElementById("vehicleSelect").value;
+            const cargo = document.getElementById("cargoSelect").value;
+
+            const wpSelects = document.querySelectorAll(".wp-select");
+            const waypoints = Array.from(wpSelects).map(s => s.value).filter(v => v !== origin && v !== destination);
+
+            const btn = document.getElementById("btnOptimize");
+            btn.disabled = true;
+            btn.innerText = "🔄 Computing Shortest Multi-Farm Route...";
+
+            try {
+                const res = await fetch('/api/logistics/optimize-route', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        origin,
+                        destination,
+                        waypoints,
+                        vehicle_type: vehicle,
+                        cargo_type: cargo
+                    })
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || "Optimization failed");
+
+                currentOptimizedResult = data;
+                renderRouteOnMap(data);
+                renderAnalytics(data);
+                loadRecentRoutes();
+
+            } catch (err) {
+                alert("Error optimizing route: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "⚡ Calculate AI Optimal Route";
+            }
+        }
+
+        function renderRouteOnMap(data) {
+            routeLayerGroup.clearLayers();
+
+            const stops = data.itinerary;
+            if (!stops || stops.length === 0) return;
+
+            const latlngs = [];
+
+            stops.forEach((stop, idx) => {
+                const point = [stop.lat, stop.lng];
+                latlngs.push(point);
+
+                let color = "#d97706"; // amber waypoint
+                let label = `Stop #${stop.stop_number}`;
+                if (idx === 0) {
+                    color = "#16a34a"; // green origin
+                    label = "Origin (Farm Gate)";
+                } else if (idx === stops.length - 1) {
+                    color = "#2563eb"; // blue destination
+                    label = "Terminal Mandi";
+                }
+
+                // Circle marker with popup
+                const marker = L.circleMarker(point, {
+                    radius: 9,
+                    fillColor: color,
+                    color: "#ffffff",
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.95
+                });
+
+                marker.bindPopup(`
+                    <div style="font-family: Inter, sans-serif; font-size: 13px;">
+                        <strong style="color:${color};">${label}</strong><br>
+                        <strong>${stop.name}</strong><br>
+                        Role: ${stop.role}<br>
+                        Dist: ${stop.cumulative_distance_km} km | ETA: ${stop.est_arrival_mins} mins
+                    </div>
+                `);
+
+                routeLayerGroup.addLayer(marker);
+            });
+
+            // Draw glowing optimized route polyline
+            const routeLine = L.polyline(latlngs, {
+                color: '#2e7d32',
+                weight: 5,
+                opacity: 0.85,
+                dashArray: '8, 8'
+            });
+            routeLayerGroup.addLayer(routeLine);
+
+            map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
+        }
+
+        function renderAnalytics(data) {
+            document.getElementById("metricsRow").style.display = "grid";
+            document.getElementById("itineraryCard").style.display = "block";
+
+            document.getElementById("valDistSaved").innerText = `${data.distance_saved_km} km`;
+            document.getElementById("valDistPercent").innerText = `(${data.percentage_saved}% Detour Saved)`;
+
+            document.getElementById("valCostSaved").innerText = `₹${data.cost_saved_inr.toLocaleString('en-IN')}`;
+            document.getElementById("valTotalCost").innerText = `Optimized Cost: ₹${data.total_freight_cost_inr.toLocaleString('en-IN')}`;
+
+            document.getElementById("valDuration").innerText = `${data.estimated_duration_hrs} hrs`;
+            document.getElementById("valTemp").innerText = data.recommended_temp_c;
+            document.getElementById("itineraryRouteCode").innerText = data.route_code;
+
+            // Render table rows
+            const tbody = document.getElementById("itineraryTableBody");
+            tbody.innerHTML = "";
+
+            data.itinerary.forEach((s, idx) => {
+                let pillClass = "pill-waypoint";
+                if (idx === 0) pillClass = "pill-origin";
+                if (idx === data.itinerary.length - 1) pillClass = "pill-dest";
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><span class="stop-pill ${pillClass}">${s.stop_number}</span></td>
+                    <td><strong>${s.name}</strong></td>
+                    <td><span style="font-size:0.8rem; color:#666;">${s.role}</span></td>
+                    <td>${s.cumulative_distance_km} km</td>
+                    <td>+${s.est_arrival_mins} mins</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function loadRecentRoutes() {
+            const container = document.getElementById("recentRoutesContainer");
+            try {
+                const res = await fetch('/api/logistics/routes');
+                const routes = await res.json();
+
+                if (!routes || routes.length === 0) {
+                    container.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted);">No saved dispatches yet.</p>`;
+                    return;
+                }
+
+                let html = "";
+                routes.slice(0, 4).forEach(r => {
+                    html += `
+                        <div class="saved-route-chip" onclick="loadSavedRoute('${r.route_code}')">
+                            <div>
+                                <strong style="color:var(--primary); font-size:0.85rem;">${r.route_code}</strong>
+                                <div style="font-size:0.75rem; color:#666;">${r.origin.split(' ')[0]} ➔ ${r.destination.split(' ')[0]}</div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="color:#16a34a; font-weight:bold; font-size:0.85rem;">Saved ₹${r.cost_saved_inr}</span>
+                                <div style="font-size:0.7rem; color:#888;">${r.optimized_distance_km} km</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+            } catch (err) {
+                container.innerHTML = `<p style="font-size:0.85rem; color:red;">Failed to load saved routes.</p>`;
+            }
+        }
+
+        async function loadSavedRoute(code) {
+            try {
+                const res = await fetch(`/api/logistics/routes/${code}`);
+                const r = await res.json();
+                renderRouteOnMap({ itinerary: r.waypoints });
+                renderAnalytics({
+                    route_code: r.route_code,
+                    distance_saved_km: r.distance_saved_km,
+                    percentage_saved: Math.round((r.distance_saved_km / r.unoptimized_distance_km) * 100),
+                    cost_saved_inr: r.cost_saved_inr,
+                    total_freight_cost_inr: r.total_freight_cost_inr,
+                    estimated_duration_hrs: r.estimated_duration_hrs,
+                    recommended_temp_c: r.recommended_temp_c,
+                    itinerary: r.waypoints
+                });
+            } catch (e) {
+                alert("Could not load route details.");
+            }
+        }
+
+        function bookThisDispatch() {
+            if (!currentOptimizedResult) return;
+            alert(`Carrier Assigned Successfully! Route ${currentOptimizedResult.route_code} is booked with GPS Telemetry and cold-chain temperature safeguards.`);
+        }
+    </script>
+</body>
+</html>

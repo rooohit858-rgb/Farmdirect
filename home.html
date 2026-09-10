@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmDirect | Direct Agricultural Trade & AI Mandi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #f4f9f4;
+            color: #333;
+            line-height: 1.6;
+        }
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1920&q=80') no-repeat center center;
+            background-size: cover;
+            height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
+        .hero-content {
+            max-width: 700px;
+        }
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #e0e0e0;
+        }
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .btn-farmer {
+            background: #2e7d32;
+            color: white;
+        }
+        .btn-farmer:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+        }
+        .btn-consumer {
+            background: #1565c0;
+            color: white;
+        }
+        .btn-consumer:hover {
+            background: #0d47a1;
+            transform: translateY(-2px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 60px 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .features h2 {
+            font-size: 30px;
+            color: #1b5e20;
+            margin-bottom: 40px;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-top: 4px solid #2e7d32;
+            text-align: left;
+        }
+        .feature-card h3 {
+            color: #2e7d32;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+        .feature-card p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Footer */
+        footer {
+            background: #1b5e20;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1>🌾 FarmDirect Platform</h1>
+            <p>Empowering Farmers with Direct Trade, Fair Pricing, and connecting Consumers directly with farm-fresh produce without middlemen.</p>
+            
+            <div class="btn-group">
+                <a href="login.html?role=farmer" class="btn btn-farmer">👨‍🌾 Continue as Farmer</a>
+                <a href="login.html?role=consumer" class="btn btn-consumer">🛒 Continue as Consumer</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features">
+        <h2>Why Choose FarmDirect?</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>Direct P2P Trading</h3>
+                <p>Farmers can list their harvested crops directly, ensuring better profits, while consumers get farm-fresh organic goods at reasonable rates.</p>
+            </div>
+            <div class="feature-card">
+                <h3>AI Mandi Predictor</h3>
+                <p>Smart analytical tools and predictors to help farmers understand market trends, crop pricing, and demand forecasts effectively.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Unified Role Profiles</h3>
+                <p>Seamless session management tailored for both roles with instant profile insights, easy order tracking, and secure logouts.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 FarmDirect. Bridging the gap between Farms and Homes.</p>
+    </footer>
+
+</body>
+</html>

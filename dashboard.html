@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Portal & AI Mandi | FarmDirect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .dashboard-container { max-width: 1100px; margin: 2rem auto 4rem; padding: 0 1.5rem; }
+        .dashboard-tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #ddd; overflow-x: auto; }
+        .tab-btn { padding: 0.8rem 1.5rem; font-weight: 700; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; color: #666; font-size: 1rem; white-space: nowrap; }
+        .tab-btn.active { color: #2e7d32; border-bottom-color: #2e7d32; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+        .farmer-product-card { background: #fff; border-radius: 8px; border: 1px solid #ddd; padding: 1rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .farmer-product-img { width: 90px; height: 90px; object-fit: cover; border-radius: 6px; }
+        .ai-mandi-card { background: linear-gradient(135deg, rgba(46, 125, 50, 0.05), rgba(255, 255, 255, 1)); border: 1px solid #2e7d32; border-radius: 12px; padding: 1.5rem; margin-top: 1rem; }
+        .ai-badge { background: #2e7d32; color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem; font-weight: bold; }
+        .ai-result-box { margin-top: 1.5rem; padding: 1.2rem; background: #f4fbf7; border: 1px solid #2e7d32; border-radius: 8px; }
+        .price-highlight { font-size: 1.4rem; color: #2e7d32; font-weight: 800; }
+        
+        /* FPO Collective Styles */
+        .fpo-card { background: #ffffff; border: 1px solid #c8e6c9; border-left: 5px solid #2e7d32; border-radius: 10px; padding: 1.2rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .fpo-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+        .fpo-tag { background: #e8f5e9; color: #2e7d32; font-size: 0.75rem; padding: 3px 8px; border-radius: 12px; font-weight: bold; }
+        .fpo-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; font-size: 0.85rem; color: #555; margin-top: 0.6rem; }
+        .btn-fpo-join { background: #2e7d32; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+        .btn-fpo-join:hover { background: #1b5e20; }
+
+        @media (max-width: 768px) { .form-grid-3, .form-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="consumer.html" class="logo">🌾 FarmDirect</a>
+            <nav class="nav-links">
+                <a href="consumer.html">Marketplace</a>
+                <a href="index.html">Farmer Home</a>
+                <a href="dashboard.html" class="active">Farmer Portal</a>
+                <a href="logistics.html">🚚 Route Optimizer</a>
+                <span id="farmerWelcomeUser" style="color: #fff; font-size: 0.9rem; align-self: center; margin-right: 5px;"></span>
+                <button onclick="logout()" style="background:#d32f2f; color:#fff; padding:6px 12px; border:none; border-radius:4px; cursor:pointer;">Logout</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+        <h2>Farmer Dashboard & AI Mandi</h2>
+        <p style="color: #666; margin-bottom: 1.5rem;">Manage your active listings, check exact local mandi rates, optimize transport routes, and connect with FPOs.</p>
+
+        <div class="dashboard-tabs">
+            <button class="tab-btn active" id="tabAddBtn" onclick="switchTab('add')">➕ Add New Item</button>
+            <button class="tab-btn" id="tabMyBtn" onclick="switchTab('my')">📦 My Products (<span id="myProductCount">0</span>)</button>
+            <button class="tab-btn" id="tabAiBtn" onclick="switchTab('ai')">🤖 AI Mandi Predictor</button>
+            <button class="tab-btn" id="tabFpoBtn" onclick="switchTab('fpo')">🏛️ FPO Collective Network</button>
+            <a href="logistics.html" class="tab-btn" style="text-decoration:none; color:#1b5e20; background: #e8f5e9; border-radius: 6px;">🚚 Route Optimizer ➔</a>
+        </div>
+
+        <!-- Tab 1: Add New Product -->
+        <div id="addProductSection" class="card" style="background:#fff; padding:20px; border-radius:8px; border:1px solid #ddd;">
+            <h3>List New Produce For Sale</h3>
+            <form id="addProductForm" onsubmit="handleProductSubmit(event)" style="margin-top: 1.2rem;">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Item Name / Title</label>
+                        <input type="text" id="pTitle" class="form-control" placeholder="e.g. Organic Wheat" required style="width:100%; padding:8px; margin-top:5px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="pCategory" class="form-control" required style="width:100%; padding:8px; margin-top:5px;">
+                            <option value="Grains & Feed">Grains, Feed & Hay</option>
+                            <option value="Vegetables">Fresh Vegetables</option>
+                            <option value="Fruits">Fresh Fruits</option>
+                            <option value="Dairy & Meat">Dairy & Animal Products</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (in ₹)</label>
+                        <input type="number" id="pPrice" class="form-control" placeholder="e.g. 50" required style="width:100%; padding:8px; margin-top:5px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Location / Mandi</label>
+                        <input type="text" id="pLocation" class="form-control" placeholder="e.g. Jaipur, Rajasthan" required style="width:100%; padding:8px; margin-top:5px;">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label>Image URL (Optional)</label>
+                    <input type="url" id="pImg" class="form-control" placeholder="https://images.unsplash.com/..." style="width:100%; padding:8px; margin-top:5px;">
+                </div>
+
+                <button type="submit" style="margin-top: 1.2rem; background:#2e7d32; color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor: pointer;">
+                    Publish Listing
+                </button>
+            </form>
+        </div>
+
+        <!-- Tab 2: My Products -->
+        <div id="myProductsSection" style="display: none;">
+            <div id="farmerProductsList"></div>
+        </div>
+
+        <!-- Tab 3: AI Mandi Predictor -->
+        <div id="aiMandiSection" style="display: none;">
+            <div class="ai-mandi-card">
+                <h3><span class="ai-badge">AI</span> Live Mandi Rate & Price Predictor</h3>
+                <p style="color: #666; margin-top: 5px;">Select location and crop to fetch exact mandi rates.</p>
+
+                <div class="form-grid-3" style="margin-top: 1.2rem;">
+                    <div class="form-group">
+                        <label>State</label>
+                        <select id="aiStateSelect" class="form-control" onchange="updateDistricts()" style="width:100%; padding:8px;">
+                            <option value="Punjab">Punjab</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>District / Mandi</label>
+                        <select id="aiDistrictSelect" class="form-control" style="width:100%; padding:8px;"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Crop / Produce</label>
+                        <select id="aiCropSelect" class="form-control" style="width:100%; padding:8px;">
+                            <option value="Tomato">Fresh Tomatoes</option>
+                            <option value="Wheat">Wheat (Kanak)</option>
+                            <option value="Apple">Apple (Seb)</option>
+                            <option value="Potato">Potato (Aloo)</option>
+                            <option value="Rice">Basmati Rice</option>
+                            <option value="Onion">Onion (Pyaz)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="runAiPrediction()" style="margin-top: 1.2rem; width: 100%; background:#2e7d32; color:#fff; padding:12px; border:none; border-radius:6px; cursor: pointer; font-weight:bold;">
+                    🔍 Check Exact Mandi Price
+                </button>
+
+                <div id="aiResult" class="ai-result-box" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Tab 4: FPO Collective Network -->
+        <div id="fpoSection" style="display: none;">
+            <div class="card" style="background:#fff; padding:20px; border-radius:8px; border:1px solid #ddd; margin-bottom:1.5rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <h3 style="color:#1b5e20;">🏛️ Farmer Producer Organisations (FPO Hub)</h3>
+                        <p style="color:#666; font-size:0.9rem; margin-top:4px;">
+                            Join an FPO in your region to pool harvest, access bulk procurement rates, and eliminate individual freight costs.
+                        </p>
+                    </div>
+                    <button onclick="toggleRegisterFpoModal()" style="background:#1b5e20; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600;">
+                        + Register New FPO
+                    </button>
+                </div>
+            </div>
+
+            <div id="fpoListContainer">
+                <p>Loading active Farmer Producer Organisations...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- FPO Registration Modal -->
+    <div id="fpoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:white; padding:25px; border-radius:12px; max-width:480px; width:90%; box-shadow:0 10px 25px rgba(0,0,0,0.3);">
+            <h3 style="color:#1b5e20; margin-bottom:12px;">Register Farmer Producer Organisation (FPO)</h3>
+            <form onsubmit="handleFpoSubmit(event)">
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label style="font-size:0.85rem; font-weight:600;">FPO Name</label>
+                    <input type="text" id="fpoName" class="form-control" placeholder="e.g. Malwa Kisan Samridhi FPO" required style="width:100%; padding:8px; margin-top:4px;">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+                    <div class="form-group">
+                        <label style="font-size:0.85rem; font-weight:600;">State</label>
+                        <input type="text" id="fpoState" class="form-control" placeholder="Punjab" required style="width:100%; padding:8px; margin-top:4px;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size:0.85rem; font-weight:600;">District</label>
+                        <input type="text" id="fpoDistrict" class="form-control" placeholder="Ludhiana" required style="width:100%; padding:8px; margin-top:4px;">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label style="font-size:0.85rem; font-weight:600;">Primary Crops Aggregated</label>
+                    <input type="text" id="fpoCrops" class="form-control" placeholder="e.g. Wheat, Basmati Rice, Mustard" required style="width:100%; padding:8px; margin-top:4px;">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
+                    <div class="form-group">
+                        <label style="font-size:0.85rem; font-weight:600;">Member Farmers</label>
+                        <input type="number" id="fpoMembers" class="form-control" placeholder="250" required style="width:100%; padding:8px; margin-top:4px;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size:0.85rem; font-weight:600;">Contact Phone</label>
+                        <input type="tel" id="fpoPhone" class="form-control" placeholder="9876543210" required style="width:100%; padding:8px; margin-top:4px;">
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button type="submit" style="flex:1; background:#2e7d32; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-weight:bold;">Register FPO</button>
+                    <button type="button" onclick="toggleRegisterFpoModal()" style="flex:1; background:#757575; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 FarmDirect. Empowering Agriculture with Direct Peer-to-Peer Trading.</p>
+    </footer>
+
+    <script>
+        const districtData = {
+            "Punjab": ["Ludhiana Mandi", "Amritsar Mandi", "Patiala Mandi"],
+            "Haryana": ["Karnal Mandi", "Ambala Mandi", "Hisar Mandi"],
+            "Rajasthan": ["Jaipur Mandi", "Kota Mandi", "Alwar Mandi"],
+            "Uttar Pradesh": ["Agra Mandi", "Mathura Mandi", "Kanpur Mandi"],
+            "Maharashtra": ["Nashik Mandi", "Pune APMC", "Nagpur Orange Mandi"]
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentFarmer = localStorage.getItem('userName');
+            if(currentFarmer) {
+                document.getElementById('farmerWelcomeUser').innerText = `👤 ${currentFarmer}`;
+            }
+            updateDistricts();
+            loadFarmerProducts();
+            loadFpos();
+        });
+
+        function updateDistricts() {
+            const state = document.getElementById("aiStateSelect").value;
+            const districtSelect = document.getElementById("aiDistrictSelect");
+            districtSelect.innerHTML = "";
+            const districts = districtData[state] || ["Main APMC Mandi"];
+            districts.forEach(d => {
+                const opt = document.createElement("option");
+                opt.value = d;
+                opt.innerText = d;
+                districtSelect.appendChild(opt);
+            });
+        }
+
+        function switchTab(tab) {
+            document.getElementById("addProductSection").style.display = tab === 'add' ? "block" : "none";
+            document.getElementById("myProductsSection").style.display = tab === 'my' ? "block" : "none";
+            document.getElementById("aiMandiSection").style.display = tab === 'ai' ? "block" : "none";
+            document.getElementById("fpoSection").style.display = tab === 'fpo' ? "block" : "none";
+            
+            document.getElementById("tabAddBtn").classList.toggle("active", tab === 'add');
+            document.getElementById("tabMyBtn").classList.toggle("active", tab === 'my');
+            document.getElementById("tabAiBtn").classList.toggle("active", tab === 'ai');
+            document.getElementById("tabFpoBtn").classList.toggle("active", tab === 'fpo');
+
+            if (tab === 'my') loadFarmerProducts();
+            if (tab === 'fpo') loadFpos();
+        }
+
+        async function handleProductSubmit(e) {
+            e.preventDefault();
+            const currentFarmerName = localStorage.getItem('userName') || "Verified Farmer";
+            
+            const newProduct = {
+                title: document.getElementById("pTitle").value,
+                category: document.getElementById("pCategory").value,
+                price: parseFloat(document.getElementById("pPrice").value),
+                location: document.getElementById("pLocation").value,
+                seller: currentFarmerName,
+                image: document.getElementById("pImg").value || 'https://images.unsplash.com/photo-1542838132-92c53300491e'
+            };
+
+            try {
+                const res = await fetch('/api/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newProduct)
+                });
+                if(!res.ok) throw new Error("Server error");
+                
+                alert("Item successfully listed!");
+                document.getElementById("addProductForm").reset();
+                switchTab('my');
+            } catch (err) {
+                alert("Failed to save product on server.");
+            }
+        }
+
+        async function loadFarmerProducts() {
+            const listContainer = document.getElementById("farmerProductsList");
+            const countBadge = document.getElementById("myProductCount");
+            const currentFarmerName = localStorage.getItem('userName') || "Verified Farmer";
+
+            try {
+                const res = await fetch(`/api/products?seller=${encodeURIComponent(currentFarmerName)}`);
+                const products = await res.json();
+                
+                if(countBadge) countBadge.innerText = products.length;
+
+                if (products.length === 0) {
+                    listContainer.innerHTML = `<div style="text-align: center; padding: 2rem; background:#fff; border-radius:8px; border:1px dashed #ccc;"><h3>No items listed by you yet.</h3><p style="color:#666;">Add a new product using the 'Add New Item' tab.</p></div>`;
+                    return;
+                }
+
+                let html = "";
+                products.forEach(item => {
+                    html += `
+                        <div class="farmer-product-card">
+                            <img src="${item.image}" class="farmer-product-img" alt="${item.title}">
+                            <div style="flex-grow:1;">
+                                <span style="font-size:12px; color:#666;">${item.category}</span>
+                                <h4 style="margin: 2px 0;">${item.title}</h4>
+                                <strong style="color: #2e7d32;">₹${item.price}</strong> <span style="font-size:12px; color:#888;">(${item.sellerLocation || 'Local'})</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                listContainer.innerHTML = html;
+            } catch(e) {
+                listContainer.innerHTML = "<p>Could not load products.</p>";
+            }
+        }
+
+        async function runAiPrediction() {
+            const crop = document.getElementById("aiCropSelect").value;
+            const state = document.getElementById("aiStateSelect").value;
+            const district = document.getElementById("aiDistrictSelect").value;
+            const resultBox = document.getElementById("aiResult");
+
+            resultBox.style.display = "block";
+            resultBox.innerHTML = `<strong>🔄 Fetching live real-time mandi rates for ${crop}...</strong>`;
+
+            try {
+                const response = await fetch(`/api/mandi-rates?state=${encodeURIComponent(state)}&district=${encodeURIComponent(district)}&crop=${encodeURIComponent(crop)}`);
+                const data = await response.json();
+                
+                resultBox.innerHTML = `
+                    <div>
+                        <h4 style="margin: 0; color: #1b5e20;">📍 ${district}, ${state}</h4>
+                        <p style="margin: 3px 0 0; color: #666;">Crop: <strong>${crop}</strong></p>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <span style="font-size: 0.85rem; color: #666;">Live Mandi Price:</span><br>
+                        <span class="price-highlight">₹${data.exactPrice} ${data.unit}</span>
+                    </div>
+                    <hr style="margin: 12px 0; border:0; border-top:1px solid #ddd;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; font-size: 0.9rem;">
+                        <div><strong>Min Price:</strong> ₹${data.minPrice}</div>
+                        <div><strong>Max Price:</strong> ₹${data.maxPrice}</div>
+                        <div><strong>Market Demand:</strong> <span style="color: #2e7d32; font-weight: bold;">High 🔥</span></div>
+                    </div>
+                `;
+            } catch (err) {
+                resultBox.innerHTML = `<p style="color:red;">Failed to fetch live prediction.</p>`;
+            }
+        }
+
+        // --- FPO NETWORK FUNCTIONS ---
+        async function loadFpos() {
+            const container = document.getElementById("fpoListContainer");
+            try {
+                const res = await fetch("/api/fpos");
+                const fpos = await res.json();
+                
+                if (!fpos || fpos.length === 0) {
+                    container.innerHTML = `<p style="color:#666;">No FPOs currently registered in this region.</p>`;
+                    return;
+                }
+
+                let html = "";
+                fpos.forEach(fpo => {
+                    html += `
+                        <div class="fpo-card">
+                            <div class="fpo-header">
+                                <div>
+                                    <h4 style="color:#1b5e20; margin:0; font-size:1.1rem;">${fpo.name}</h4>
+                                    <small style="color:#666;">Reg No: ${fpo.registration_number || 'NABARD-FPO-2026'}</small>
+                                </div>
+                                <span class="fpo-tag">✓ Verified FPO</span>
+                            </div>
+                            <div class="fpo-details">
+                                <div>📍 <strong>Location:</strong> ${fpo.district}, ${fpo.state}</div>
+                                <div>🌾 <strong>Crops:</strong> ${fpo.primary_crops}</div>
+                                <div>👥 <strong>Members:</strong> ${fpo.member_count}+ Farmers</div>
+                                <div>📞 <strong>Contact:</strong> ${fpo.contact_phone}</div>
+                            </div>
+                            <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+                                <button class="btn-fpo-join" onclick="joinFpo('${fpo.name}')">🤝 Connect / Pool Produce</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (err) {
+                container.innerHTML = "<p>Unable to load FPOs from server.</p>";
+            }
+        }
+
+        function toggleRegisterFpoModal() {
+            const m = document.getElementById("fpoModal");
+            m.style.display = m.style.display === "flex" ? "none" : "flex";
+        }
+
+        async function handleFpoSubmit(e) {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById("fpoName").value,
+                state: document.getElementById("fpoState").value,
+                district: document.getElementById("fpoDistrict").value,
+                primary_crops: document.getElementById("fpoCrops").value,
+                member_count: parseInt(document.getElementById("fpoMembers").value) || 100,
+                contact_phone: document.getElementById("fpoPhone").value
+            };
+
+            try {
+                const res = await fetch("/api/fpos", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                alert("FPO Registered Successfully!");
+                toggleRegisterFpoModal();
+                loadFpos();
+            } catch (err) {
+                alert("Could not register FPO on server.");
+            }
+        }
+
+        function joinFpo(fpoName) {
+            const farmerName = localStorage.getItem("userName") || "Farmer Partner";
+            alert(`Request sent to ${fpoName}! The collective coordinator will reach out to ${farmerName} to coordinate bulk harvest pooling and transportation.`);
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>
