@@ -21,6 +21,7 @@
         .ai-badge { background: #2e7d32; color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem; font-weight: bold; }
         .ai-result-box { margin-top: 1.5rem; padding: 1.2rem; background: #f4fbf7; border: 1px solid #2e7d32; border-radius: 8px; }
         .price-highlight { font-size: 1.4rem; color: #2e7d32; font-weight: 800; }
+<<<<<<< HEAD
         
         /* FPO Collective Styles */
         .fpo-card { background: #ffffff; border: 1px solid #c8e6c9; border-left: 5px solid #2e7d32; border-radius: 10px; padding: 1.2rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
@@ -30,6 +31,8 @@
         .btn-fpo-join { background: #2e7d32; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
         .btn-fpo-join:hover { background: #1b5e20; }
 
+=======
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
         @media (max-width: 768px) { .form-grid-3, .form-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -40,9 +43,13 @@
             <a href="consumer.html" class="logo">🌾 FarmDirect</a>
             <nav class="nav-links">
                 <a href="consumer.html">Marketplace</a>
+<<<<<<< HEAD
                 <a href="index.html">Farmer Home</a>
                 <a href="dashboard.html" class="active">Farmer Portal</a>
                 <a href="logistics.html">🚚 Route Optimizer</a>
+=======
+                <a href="dashboard.html" class="active">Farmer Portal</a>
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                 <span id="farmerWelcomeUser" style="color: #fff; font-size: 0.9rem; align-self: center; margin-right: 5px;"></span>
                 <button onclick="logout()" style="background:#d32f2f; color:#fff; padding:6px 12px; border:none; border-radius:4px; cursor:pointer;">Logout</button>
             </nav>
@@ -51,14 +58,21 @@
 
     <main class="dashboard-container">
         <h2>Farmer Dashboard & AI Mandi</h2>
+<<<<<<< HEAD
         <p style="color: #666; margin-bottom: 1.5rem;">Manage your active listings, check exact local mandi rates, optimize transport routes, and connect with FPOs.</p>
+=======
+        <p style="color: #666; margin-bottom: 1.5rem;">Manage your active listings and check exact local mandi rates.</p>
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
 
         <div class="dashboard-tabs">
             <button class="tab-btn active" id="tabAddBtn" onclick="switchTab('add')">➕ Add New Item</button>
             <button class="tab-btn" id="tabMyBtn" onclick="switchTab('my')">📦 My Products (<span id="myProductCount">0</span>)</button>
             <button class="tab-btn" id="tabAiBtn" onclick="switchTab('ai')">🤖 AI Mandi Predictor</button>
+<<<<<<< HEAD
             <button class="tab-btn" id="tabFpoBtn" onclick="switchTab('fpo')">🏛️ FPO Collective Network</button>
             <a href="logistics.html" class="tab-btn" style="text-decoration:none; color:#1b5e20; background: #e8f5e9; border-radius: 6px;">🚚 Route Optimizer ➔</a>
+=======
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
         </div>
 
         <!-- Tab 1: Add New Product -->
@@ -118,7 +132,10 @@
                             <option value="Haryana">Haryana</option>
                             <option value="Rajasthan">Rajasthan</option>
                             <option value="Uttar Pradesh">Uttar Pradesh</option>
+<<<<<<< HEAD
                             <option value="Maharashtra">Maharashtra</option>
+=======
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                         </select>
                     </div>
                     <div class="form-group">
@@ -132,8 +149,11 @@
                             <option value="Wheat">Wheat (Kanak)</option>
                             <option value="Apple">Apple (Seb)</option>
                             <option value="Potato">Potato (Aloo)</option>
+<<<<<<< HEAD
                             <option value="Rice">Basmati Rice</option>
                             <option value="Onion">Onion (Pyaz)</option>
+=======
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                         </select>
                     </div>
                 </div>
@@ -145,6 +165,7 @@
                 <div id="aiResult" class="ai-result-box" style="display: none;"></div>
             </div>
         </div>
+<<<<<<< HEAD
 
         <!-- Tab 4: FPO Collective Network -->
         <div id="fpoSection" style="display: none;">
@@ -209,6 +230,10 @@
         </div>
     </div>
 
+=======
+    </main>
+
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
     <footer>
         <p>&copy; 2026 FarmDirect. Empowering Agriculture with Direct Peer-to-Peer Trading.</p>
     </footer>
@@ -218,8 +243,12 @@
             "Punjab": ["Ludhiana Mandi", "Amritsar Mandi", "Patiala Mandi"],
             "Haryana": ["Karnal Mandi", "Ambala Mandi", "Hisar Mandi"],
             "Rajasthan": ["Jaipur Mandi", "Kota Mandi", "Alwar Mandi"],
+<<<<<<< HEAD
             "Uttar Pradesh": ["Agra Mandi", "Mathura Mandi", "Kanpur Mandi"],
             "Maharashtra": ["Nashik Mandi", "Pune APMC", "Nagpur Orange Mandi"]
+=======
+            "Uttar Pradesh": ["Agra Mandi", "Mathura Mandi", "Kanpur Mandi"]
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
         };
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -229,7 +258,10 @@
             }
             updateDistricts();
             loadFarmerProducts();
+<<<<<<< HEAD
             loadFpos();
+=======
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
         });
 
         function updateDistricts() {
@@ -249,15 +281,23 @@
             document.getElementById("addProductSection").style.display = tab === 'add' ? "block" : "none";
             document.getElementById("myProductsSection").style.display = tab === 'my' ? "block" : "none";
             document.getElementById("aiMandiSection").style.display = tab === 'ai' ? "block" : "none";
+<<<<<<< HEAD
             document.getElementById("fpoSection").style.display = tab === 'fpo' ? "block" : "none";
+=======
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
             
             document.getElementById("tabAddBtn").classList.toggle("active", tab === 'add');
             document.getElementById("tabMyBtn").classList.toggle("active", tab === 'my');
             document.getElementById("tabAiBtn").classList.toggle("active", tab === 'ai');
+<<<<<<< HEAD
             document.getElementById("tabFpoBtn").classList.toggle("active", tab === 'fpo');
 
             if (tab === 'my') loadFarmerProducts();
             if (tab === 'fpo') loadFpos();
+=======
+
+            if (tab === 'my') loadFarmerProducts();
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
         }
 
         async function handleProductSubmit(e) {
@@ -269,7 +309,11 @@
                 category: document.getElementById("pCategory").value,
                 price: parseFloat(document.getElementById("pPrice").value),
                 location: document.getElementById("pLocation").value,
+<<<<<<< HEAD
                 seller: currentFarmerName,
+=======
+                seller: currentFarmerName, // Save current logged-in farmer name as seller
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                 image: document.getElementById("pImg").value || 'https://images.unsplash.com/photo-1542838132-92c53300491e'
             };
 
@@ -295,13 +339,21 @@
             const currentFarmerName = localStorage.getItem('userName') || "Verified Farmer";
 
             try {
+<<<<<<< HEAD
+=======
+                // Fetch products specifically for this logged-in seller
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                 const res = await fetch(`/api/products?seller=${encodeURIComponent(currentFarmerName)}`);
                 const products = await res.json();
                 
                 if(countBadge) countBadge.innerText = products.length;
 
                 if (products.length === 0) {
+<<<<<<< HEAD
                     listContainer.innerHTML = `<div style="text-align: center; padding: 2rem; background:#fff; border-radius:8px; border:1px dashed #ccc;"><h3>No items listed by you yet.</h3><p style="color:#666;">Add a new product using the 'Add New Item' tab.</p></div>`;
+=======
+                    listContainer.innerHTML = `<div style="text-align: center; padding: 2rem;"><h3>No items listed by you yet.</h3><p style="color:#666;">Add a new product using the 'Add New Item' tab.</p></div>`;
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
                     return;
                 }
 
@@ -358,6 +410,7 @@
             }
         }
 
+<<<<<<< HEAD
         // --- FPO NETWORK FUNCTIONS ---
         async function loadFpos() {
             const container = document.getElementById("fpoListContainer");
@@ -435,10 +488,16 @@
             alert(`Request sent to ${fpoName}! The collective coordinator will reach out to ${farmerName} to coordinate bulk harvest pooling and transportation.`);
         }
 
+=======
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
         function logout() {
             localStorage.clear();
             window.location.href = "login.html";
         }
     </script>
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910

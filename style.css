@@ -329,4 +329,8 @@ footer { background: var(--primary); color: rgba(255,255,255,0.8); text-align: c
 }
 @media(max-width: 500px) {
     .products-grid { grid-template-columns: 1fr; }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 89c46436020675f4d3346c0689f900a33910b910
