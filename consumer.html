@@ -25,10 +25,21 @@
             <a href="consumer.html" class="logo">🌾 FarmDirect</a>
             
             <nav class="nav-links">
-                <a href="consumer.html" class="active">Marketplace</a>
-                <a href="#fpo-showcase">FPO Bulk Hub</a>
-                <a href="logistics.html">🚚 Route Optimizer</a>
-                <a href="orders.html">My Orders</a>
+                <a href="consumer.html" class="active" data-i18n="marketplace">Marketplace</a>
+                <a href="#fpo-showcase" data-i18n="fpoHub">FPO Bulk Hub</a>
+                <a href="logistics.html" data-i18n="routeOptimizer">🚚 Route Optimizer</a>
+                <a href="orders.html" data-i18n="myOrders">My Orders</a>
+
+                <!-- Multi-Language Selector -->
+                <div class="lang-selector-container">
+                    <span class="lang-globe-icon">🌐</span>
+                    <select class="lang-selector" onchange="changeLanguage(this.value)" aria-label="Select Language">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी (Hindi)</option>
+                        <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                        <option value="mr">मराठी (Marathi)</option>
+                    </select>
+                </div>
 
                 <!-- Header Search Bar -->
                 <div class="header-search">
@@ -38,8 +49,8 @@
                 
                 <!-- Auth / Profile Buttons -->
                 <div class="auth-group" id="authNavContainer">
-                    <a href="login.html?mode=login" class="btn-auth btn-login" id="loginBtn">Log In</a>
-                    <a href="login.html?mode=signup" class="btn-auth btn-signup" id="signupBtn">Sign Up</a>
+                    <a href="login.html?mode=login" class="btn-auth btn-login" id="loginBtn" data-i18n="login">Log In</a>
+                    <a href="login.html?mode=signup" class="btn-auth btn-signup" id="signupBtn" data-i18n="signUp">Sign Up</a>
                 </div>
 
                 <button class="cart-btn" onclick="window.location.href='cart.html'">🛒 Cart (<span id="cart-count">0</span>)</button>
@@ -50,11 +61,11 @@
     <!-- 3D Hero Parallax Section -->
     <section class="hero-parallax">
         <div class="hero-content" id="heroContent">
-            <h1>Direct Agricultural Marketplace</h1>
-            <p>Procure farm-fresh crops, vegetables, fruits, and dairy directly from local growers and registered Farmer Producer Organisations (FPOs) with zero middleman markups.</p>
+            <h1 data-i18n="heroTitle">Direct Agricultural Marketplace</h1>
+            <p data-i18n="heroSubtitle">Procure farm-fresh crops, vegetables, fruits, and dairy directly from local growers and registered Farmer Producer Organisations (FPOs) with zero middleman markups.</p>
             <div class="hero-actions">
-                <a href="#marketplace" class="btn-hero primary">Browse Fresh Harvest</a>
-                <a href="#fpo-showcase" class="btn-hero secondary">FPO Wholesale Hub</a>
+                <a href="#marketplace" class="btn-hero primary" data-i18n="browseHarvest">Browse Fresh Harvest</a>
+                <a href="#fpo-showcase" class="btn-hero secondary" data-i18n="fpoHub">FPO Wholesale Hub</a>
             </div>
         </div>
     </section>
@@ -79,30 +90,30 @@
     <div class="container" id="marketplace">
         <aside class="sidebar">
             <div class="card">
-                <h3>Filter Marketplace</h3>
+                <h3 data-i18n="filterMarketplace">Filter Marketplace</h3>
                 <div class="filter-group" style="margin-top: 1rem;">
-                    <label for="category-filter" style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem;">Category</label>
+                    <label for="category-filter" style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem;" data-i18n="category">Category</label>
                     <select id="category-filter" class="form-control" onchange="filterProducts()">
-                        <option value="all">All Items</option>
-                        <option value="Grains & Feed">Grains, Feed & Hay</option>
-                        <option value="Vegetables">Fresh Vegetables</option>
-                        <option value="Fruits">Fresh Fruits</option>
-                        <option value="Dairy & Meat">Dairy & Animal Products</option>
+                        <option value="all" data-i18n="allCategories">All Items</option>
+                        <option value="Grains & Feed" data-i18n="grainsCategory">Grains, Feed & Hay</option>
+                        <option value="Vegetables" data-i18n="vegetablesCategory">Fresh Vegetables</option>
+                        <option value="Fruits" data-i18n="fruitsCategory">Fresh Fruits</option>
+                        <option value="Dairy & Meat" data-i18n="dairyCategory">Dairy & Animal Products</option>
                     </select>
                 </div>
 
                 <hr class="divider" style="margin: 1.5rem 0;">
 
                 <div style="font-size: 0.85rem; color: var(--text-muted);">
-                    <p style="margin-bottom: 8px;">🛡️ <strong>Direct Trade Guarantee:</strong></p>
-                    <p>Every purchase sends 100% of the farm value directly to verified farmers and FPOs.</p>
+                    <p style="margin-bottom: 8px;"><strong data-i18n="guaranteeTitle">🛡️ Direct Trade Guarantee:</strong></p>
+                    <p data-i18n="guaranteeText">Every purchase sends 100% of the farm value directly to verified farmers and FPOs.</p>
                 </div>
             </div>
         </aside>
 
         <main>
             <div class="marketplace-header">
-                <h3>Featured Produce Listings</h3>
+                <h3 data-i18n="featuredListings">Featured Produce Listings</h3>
                 <span id="resultsCount" class="results-count">Showing Items</span>
             </div>
             <!-- Standardized Symmetrical Grid -->
@@ -143,6 +154,31 @@
     <footer>
         <p>&copy; 2026 FarmDirect. Empowering Agriculture with Direct Peer-to-Peer Trading & FPO Networks.</p>
     </footer>
+
+    <!-- Mobile Phone Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav">
+        <a href="consumer.html" class="mobile-nav-item active">
+            <span class="mobile-nav-icon">🌾</span>
+            <span>Market</span>
+        </a>
+        <a href="dashboard.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">👨‍🌾</span>
+            <span>Farmer</span>
+        </a>
+        <a href="logistics.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🚚</span>
+            <span>Routes</span>
+        </a>
+        <a href="orders.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">📦</span>
+            <span>Orders</span>
+        </a>
+        <a href="cart.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🛒</span>
+            <span>Cart</span>
+            <span class="mobile-cart-badge" id="mobile-cart-count">0</span>
+        </a>
+    </nav>
 
     <script src="script.js"></script>
     <script>

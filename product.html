@@ -15,8 +15,20 @@
         <div class="nav-container">
             <a href="consumer.html" class="logo">🌾 FarmDirect</a>
             <nav class="nav-links">
-                <a href="consumer.html">Back to Marketplace</a>
-                <a href="orders.html">My Orders</a>
+                <a href="consumer.html" data-i18n="marketplace">Back to Marketplace</a>
+                <a href="orders.html" data-i18n="myOrders">My Orders</a>
+
+                <!-- Multi-Language Selector -->
+                <div class="lang-selector-container">
+                    <span class="lang-globe-icon">🌐</span>
+                    <select class="lang-selector" onchange="changeLanguage(this.value)" aria-label="Select Language">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी (Hindi)</option>
+                        <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                        <option value="mr">मराठी (Marathi)</option>
+                    </select>
+                </div>
+
                 <button class="cart-btn" onclick="window.location.href='cart.html'">🛒 Cart (<span id="cart-count">0</span>)</button>
             </nav>
         </div>

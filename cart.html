@@ -16,15 +16,27 @@
         <div class="nav-container">
             <a href="consumer.html" class="logo">🌾 FarmDirect</a>
             <nav class="nav-links">
-                <a href="consumer.html">Marketplace</a>
-                <a href="orders.html">My Orders</a>
-                <button class="cart-btn" onclick="window.location.href='cart.html'">🛒 Cart</button>
+                <a href="consumer.html" data-i18n="marketplace">Marketplace</a>
+                <a href="orders.html" data-i18n="myOrders">My Orders</a>
+                
+                <!-- Multi-Language Selector -->
+                <div class="lang-selector-container">
+                    <span class="lang-globe-icon">🌐</span>
+                    <select class="lang-selector" onchange="changeLanguage(this.value)" aria-label="Select Language">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी (Hindi)</option>
+                        <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                        <option value="mr">मराठी (Marathi)</option>
+                    </select>
+                </div>
+
+                <button class="cart-btn" onclick="window.location.href='cart.html'">🛒 Cart (<span id="cart-count">0</span>)</button>
             </nav>
         </div>
     </header>
 
     <main class="cart-page-container">
-        <h2 style="color: var(--primary); margin-bottom: 1rem;">🛒 Shopping Cart</h2>
+        <h2 style="color: var(--primary); margin-bottom: 1rem;" data-i18n="shoppingCart">🛒 Shopping Cart</h2>
 
         <div class="cart-layout">
             <!-- Left Side: Cart Items List -->
@@ -34,26 +46,26 @@
 
             <!-- Right Side: Summary Box & Payment -->
             <div class="card" id="summaryCard" style="height: fit-content;">
-                <h3>Order Summary</h3>
+                <h3 data-i18n="orderSummary">Order Summary</h3>
                 <div class="summary-row">
-                    <span>Produce Subtotal</span>
+                    <span data-i18n="produceSubtotal">Produce Subtotal</span>
                     <span>₹<span id="subTotal">0</span></span>
                 </div>
                 <div class="summary-row">
-                    <span>Direct Farm Delivery Fee</span>
+                    <span data-i18n="deliveryFee">Direct Farm Delivery Fee</span>
                     <span style="color: var(--primary-light); font-weight: bold;">₹50</span>
                 </div>
                 <hr class="divider">
                 <div class="summary-row total-row">
-                    <span>Estimated Total</span>
+                    <span data-i18n="estimatedTotal">Estimated Total</span>
                     <span>₹<span id="grandTotal">50</span></span>
                 </div>
 
                 <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem;">
-                    <a href="checkout.html" class="btn-submit" style="display: block; text-align: center; text-decoration: none; padding: 0.9rem; font-size: 1rem;">
+                    <a href="checkout.html" class="btn-submit" style="display: block; text-align: center; text-decoration: none; padding: 0.9rem; font-size: 1rem;" data-i18n="proceedCheckout">
                         Proceed to Secure Checkout ➔
                     </a>
-                    <a href="consumer.html" style="text-align: center; color: var(--primary); font-weight: 600; font-size: 0.9rem; text-decoration: none;">
+                    <a href="consumer.html" style="text-align: center; color: var(--primary); font-weight: 600; font-size: 0.9rem; text-decoration: none;" data-i18n="continueShopping">
                         ← Continue Shopping
                     </a>
                 </div>
@@ -65,86 +77,37 @@
         <p>&copy; 2026 FarmDirect. Empowering Agriculture with Direct Peer-to-Peer Trading.</p>
     </footer>
 
+    <!-- Mobile Phone Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav">
+        <a href="consumer.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🌾</span>
+            <span>Market</span>
+        </a>
+        <a href="dashboard.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">👨‍🌾</span>
+            <span>Farmer</span>
+        </a>
+        <a href="logistics.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🚚</span>
+            <span>Routes</span>
+        </a>
+        <a href="orders.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">📦</span>
+            <span>Orders</span>
+        </a>
+        <a href="cart.html" class="mobile-nav-item active">
+            <span class="mobile-nav-icon">🛒</span>
+            <span>Cart</span>
+            <span class="mobile-cart-badge" id="mobile-cart-count">0</span>
+        </a>
+    </nav>
+
+    <script src="script.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", renderCartPage);
-
-        function getUnifiedCart() {
-            return JSON.parse(localStorage.getItem('cartItems')) || JSON.parse(localStorage.getItem('farmCart')) || [];
-        }
-
-        function saveUnifiedCart(cart) {
-            localStorage.setItem('cartItems', JSON.stringify(cart));
-            localStorage.setItem('farmCart', JSON.stringify(cart));
-        }
-
-        function renderCartPage() {
-            const cart = getUnifiedCart();
-            const cartItemsList = document.getElementById("cartItemsList");
-            const summaryCard = document.getElementById("summaryCard");
-
-            if (cart.length === 0) {
-                cartItemsList.innerHTML = `<div style="text-align: center; padding: 3rem; background: #fff; border-radius: 12px; border: 1px dashed var(--border);">
-                    <h3>Your Cart is Currently Empty 🛒</h3>
-                    <p style="margin-top: 10px; color: var(--text-muted);">Fresh harvest straight from farmers is waiting for you.</p>
-                    <a href="consumer.html" class="btn-submit" style="display: inline-block; margin-top: 1rem; text-decoration: none;">Explore Available Produce</a>
-                </div>`;
-                if(summaryCard) summaryCard.style.display = "none";
-                return;
-            }
-
-            if(summaryCard) summaryCard.style.display = "block";
-
-            let html = "";
-            let subtotal = 0;
-
-            cart.forEach((item, index) => {
-                const qty = item.quantity || 1;
-                const itemTotal = item.price * qty;
-                subtotal += itemTotal;
-
-                html += `
-                    <div class="cart-item-card">
-                        <img src="${item.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=500&q=80'}" class="cart-item-img" alt="${item.title}">
-                        <div class="cart-item-info">
-                            <div class="cart-item-title">${item.title}</div>
-                            <div class="cart-item-price">₹${item.price} each</div>
-                            <small style="color: var(--text-muted);">Origin: ${item.sellerLocation || item.location || 'Local Farm'}</small>
-                        </div>
-                        <div class="cart-qty-controls">
-                            <button class="btn-qty" onclick="changeQuantity(${index}, -1)">-</button>
-                            <span style="font-weight: 600; min-width: 24px; text-align: center;">${qty}</span>
-                            <button class="btn-qty" onclick="changeQuantity(${index}, 1)">+</button>
-                            <strong style="margin: 0 12px; color: var(--primary);">₹${itemTotal}</strong>
-                            <button class="btn-remove" onclick="removeItem(${index})">Remove</button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            cartItemsList.innerHTML = html;
-            const deliveryFee = 50;
-            document.getElementById("subTotal").innerText = subtotal;
-            document.getElementById("grandTotal").innerText = (subtotal + deliveryFee);
-        }
-
-        function changeQuantity(index, delta) {
-            let cart = getUnifiedCart();
-            if (cart[index]) {
-                cart[index].quantity = (cart[index].quantity || 1) + delta;
-                if (cart[index].quantity <= 0) {
-                    cart.splice(index, 1);
-                }
-            }
-            saveUnifiedCart(cart);
+        document.addEventListener("DOMContentLoaded", () => {
             renderCartPage();
-        }
-
-        function removeItem(index) {
-            let cart = getUnifiedCart();
-            cart.splice(index, 1);
-            saveUnifiedCart(cart);
-            renderCartPage();
-        }
+            updateCartBadge();
+        });
     </script>
 </body>
 </html>

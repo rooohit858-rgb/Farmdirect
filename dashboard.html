@@ -39,19 +39,31 @@
         <div class="nav-container">
             <a href="consumer.html" class="logo">🌾 FarmDirect</a>
             <nav class="nav-links">
-                <a href="consumer.html">Marketplace</a>
-                <a href="index.html">Farmer Home</a>
-                <a href="dashboard.html" class="active">Farmer Portal</a>
-                <a href="logistics.html">🚚 Route Optimizer</a>
+                <a href="consumer.html" data-i18n="marketplace">Marketplace</a>
+                <a href="index.html" data-i18n="farmerHome">Farmer Home</a>
+                <a href="dashboard.html" class="active" data-i18n="farmerPortal">Farmer Portal</a>
+                <a href="logistics.html" data-i18n="routeOptimizer">🚚 Route Optimizer</a>
+
+                <!-- Multi-Language Selector -->
+                <div class="lang-selector-container">
+                    <span class="lang-globe-icon">🌐</span>
+                    <select class="lang-selector" onchange="changeLanguage(this.value)" aria-label="Select Language">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी (Hindi)</option>
+                        <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                        <option value="mr">मराठी (Marathi)</option>
+                    </select>
+                </div>
+
                 <span id="farmerWelcomeUser" style="color: #fff; font-size: 0.9rem; align-self: center; margin-right: 5px;"></span>
-                <button onclick="logout()" style="background:#d32f2f; color:#fff; padding:6px 12px; border:none; border-radius:4px; cursor:pointer;">Logout</button>
+                <button onclick="logout()" style="background:#d32f2f; color:#fff; padding:6px 12px; border:none; border-radius:4px; cursor:pointer;" data-i18n="logout">Logout</button>
             </nav>
         </div>
     </header>
 
     <main class="dashboard-container">
-        <h2>Farmer Dashboard & AI Mandi</h2>
-        <p style="color: #666; margin-bottom: 1.5rem;">Manage your active listings, check exact local mandi rates, optimize transport routes, and connect with FPOs.</p>
+        <h2 data-i18n="farmerDashboard">Farmer Dashboard & AI Mandi</h2>
+        <p style="color: #666; margin-bottom: 1.5rem;" data-i18n="dashboardSubtitle">Manage your active listings, check exact local mandi rates, optimize transport routes, and connect with FPOs.</p>
 
         <div class="dashboard-tabs">
             <button class="tab-btn active" id="tabAddBtn" onclick="switchTab('add')">➕ Add New Item</button>
@@ -440,5 +452,35 @@
             window.location.href = "login.html";
         }
     </script>
+
+    <footer>
+        <p>&copy; 2026 FarmDirect. Empowering Agriculture with Direct Peer-to-Peer Trading & FPO Networks.</p>
+    </footer>
+
+    <!-- Mobile Phone Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav">
+        <a href="consumer.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🌾</span>
+            <span>Market</span>
+        </a>
+        <a href="dashboard.html" class="mobile-nav-item active">
+            <span class="mobile-nav-icon">👨‍🌾</span>
+            <span>Farmer</span>
+        </a>
+        <a href="logistics.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🚚</span>
+            <span>Routes</span>
+        </a>
+        <a href="orders.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">📦</span>
+            <span>Orders</span>
+        </a>
+        <a href="cart.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🛒</span>
+            <span>Cart</span>
+            <span class="mobile-cart-badge" id="mobile-cart-count">0</span>
+        </a>
+    </nav>
+    <script src="script.js"></script>
 </body>
 </html>

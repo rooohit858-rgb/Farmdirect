@@ -186,122 +186,648 @@ const productsData = [
     }
 ];
 
-// --- LocalStorage Cart Management ---
-function getCart() {
-    return JSON.parse(localStorage.getItem('farmCart')) || [];
+// --- MULTI-LANGUAGE TRANSLATION ENGINE ---
+const translations = {
+    en: {
+        marketplace: "Marketplace",
+        farmerHome: "Farmer Home",
+        farmerPortal: "Farmer Portal",
+        routeOptimizer: "🚚 Route Optimizer",
+        myOrders: "My Orders",
+        cart: "🛒 Cart",
+        login: "Log In",
+        signUp: "Sign Up",
+        register: "Register",
+        logout: "Logout",
+        searchPlaceholder: "Search wheat, tomato, milk, crops...",
+        heroTitle: "Direct Agricultural Marketplace",
+        heroSubtitle: "Procure farm-fresh crops, vegetables, fruits, and dairy directly from local growers and registered Farmer Producer Organisations (FPOs) with zero middleman markups.",
+        browseHarvest: "Browse Fresh Harvest",
+        fpoHub: "FPO Wholesale Hub",
+        filterMarketplace: "Filter Marketplace",
+        category: "Category",
+        allCategories: "All Items",
+        grainsCategory: "Grains, Feed & Hay",
+        vegetablesCategory: "Fresh Vegetables",
+        fruitsCategory: "Fresh Fruits",
+        dairyCategory: "Dairy & Animal Products",
+        featuredListings: "Featured Produce Listings",
+        showingItems: "Showing Items",
+        addToCart: "🛒 Add to Cart",
+        buyNow: "⚡ Buy Now",
+        addedToCartToast: "added to cart!",
+        viewCart: "View Cart",
+        shoppingCart: "🛒 Shopping Cart",
+        cartEmptyTitle: "Your Cart is Currently Empty 🛒",
+        cartEmptySubtitle: "Fresh harvest straight from farmers is waiting for you.",
+        exploreProduce: "Explore Available Produce",
+        orderSummary: "Order Summary",
+        produceSubtotal: "Produce Subtotal",
+        deliveryFee: "Direct Farm Delivery Fee",
+        estimatedTotal: "Estimated Total",
+        proceedCheckout: "Proceed to Secure Checkout ➔",
+        continueShopping: "← Continue Shopping",
+        remove: "Remove",
+        checkoutTitle: "Secure FarmDirect Checkout",
+        customerDetails: "Customer & Delivery Details",
+        paymentMethod: "Select Payment Method",
+        placeOrder: "Place Direct Order 🌾",
+        farmerDashboard: "Farmer Dashboard & AI Mandi",
+        dashboardSubtitle: "Manage your active listings, check exact local mandi rates, optimize transport routes, and connect with FPOs.",
+        addNewItem: "➕ Add New Item",
+        myProducts: "📦 My Products",
+        aiMandiPredictor: "🤖 AI Mandi Predictor",
+        fpoNetwork: "🏛️ FPO Collective Network",
+        listNewProduce: "List New Produce For Sale",
+        itemName: "Item Name / Title",
+        pricePerUnit: "Selling Price (₹)",
+        farmLocation: "Farm Location / District",
+        primaryPhone: "Primary Phone Number",
+        emailAddress: "Email Address",
+        password: "Password",
+        selectRole: "Select Role",
+        consumerRole: "Consumer / Buyer",
+        farmerRole: "Farmer / Seller",
+        loginToAccount: "Log In to Account",
+        registerAccount: "Register Account",
+        guaranteeTitle: "🛡️ Direct Trade Guarantee:",
+        guaranteeText: "Every purchase sends 100% of the farm value directly to verified farmers and FPOs."
+    },
+    hi: {
+        marketplace: "मंडी बाज़ार",
+        farmerHome: "किसान होम",
+        farmerPortal: "किसान पोर्टल",
+        routeOptimizer: "🚚 रूट ऑप्टिमाइज़र",
+        myOrders: "मेरे ऑर्डर",
+        cart: "🛒 कार्ट",
+        login: "लॉग इन",
+        signUp: "साइन अप",
+        register: "रजिस्टर करें",
+        logout: "लॉगआउट",
+        searchPlaceholder: "गेहूं, टमाटर, दूध, फसलें खोजें...",
+        heroTitle: "सीधा कृषि बाज़ार (किसान से ग्राहक)",
+        heroSubtitle: "स्थानीय किसानों और पंजीकृत एफपीओ (FPO) से बिना किसी बिचौलिये के सीधे ताज़ा फसलें, फल, सब्जियां और दूध खरीदें।",
+        browseHarvest: "ताज़ा फसलें देखें",
+        fpoHub: "एफपीओ थोक केंद्र",
+        filterMarketplace: "फ़िल्टर करें",
+        category: "श्रेणी (Category)",
+        allCategories: "सभी वस्तुएं",
+        grainsCategory: "अनाज और दाना",
+        vegetablesCategory: "ताज़ा सब्ज़ियाँ",
+        fruitsCategory: "ताज़ा फल",
+        dairyCategory: "डेयरी और पशु उत्पाद",
+        featuredListings: "प्रमुख कृषि उत्पाद",
+        showingItems: "उत्पाद प्रदर्शित",
+        addToCart: "🛒 कार्ट में जोड़ें",
+        buyNow: "⚡ अभी खरीदें",
+        addedToCartToast: "कार्ट में जोड़ा गया!",
+        viewCart: "कार्ट देखें",
+        shoppingCart: "🛒 शॉपिंग कार्ट",
+        cartEmptyTitle: "आपकी कार्ट अभी खाली है 🛒",
+        cartEmptySubtitle: "खेत से ताज़ा कटाई आपकी प्रतीक्षा कर रही है।",
+        exploreProduce: "उपलब्ध फसलें देखें",
+        orderSummary: "ऑर्डर सारांश",
+        produceSubtotal: "उत्पाद उप-योग",
+        deliveryFee: "खेत से डिलीवरी शुल्क",
+        estimatedTotal: "कुल अनुमानित राशि",
+        proceedCheckout: "सुरक्षित चेकआउट के लिए आगे बढ़ें ➔",
+        continueShopping: "← खरीदारी जारी रखें",
+        remove: "हटाएं",
+        checkoutTitle: "सुरक्षित फार्मडायरेक्ट चेकआउट",
+        customerDetails: "ग्राहक एवं डिलीवरी विवरण",
+        paymentMethod: "भुगतान का तरीका चुनें",
+        placeOrder: "सीधा ऑर्डर करें 🌾",
+        farmerDashboard: "किसान डैशबोर्ड एवं एआई मंडी",
+        dashboardSubtitle: "अपनी लिस्टिंग प्रबंधित करें, लाइव मंडी भाव देखें, रूट ऑप्टिमाइज़ करें और FPO से जुड़ें।",
+        addNewItem: "➕ नया उत्पाद जोड़ें",
+        myProducts: "📦 मेरी फसलें",
+        aiMandiPredictor: "🤖 एआई मंडी भाव",
+        fpoNetwork: "🏛️ एफपीओ नेटवर्क",
+        listNewProduce: "बिक्री के लिए नई उपज जोड़ें",
+        itemName: "उपज का नाम / शीर्षक",
+        pricePerUnit: "बिक्री मूल्य (₹)",
+        farmLocation: "खेत का स्थान / ज़िला",
+        primaryPhone: "मोबाइल नंबर",
+        emailAddress: "ईमेल आईडी",
+        password: "पासवर्ड",
+        selectRole: "भूमिका चुनें",
+        consumerRole: "उपभोक्ता / खरीदार",
+        farmerRole: "किसान / विक्रेता",
+        loginToAccount: "खाते में लॉग इन करें",
+        registerAccount: "नया खाता बनाएं",
+        guaranteeTitle: "🛡️ प्रत्यक्ष व्यापार गारंटी:",
+        guaranteeText: "हर खरीदारी का 100% मूल्य सीधे सत्यापित किसानों और एफपीओ को मिलता है।"
+    },
+    pa: {
+        marketplace: "ਮੰਡੀ ਬਾਜ਼ਾਰ",
+        farmerHome: "ਕਿਸਾਨ ਹੋਮ",
+        farmerPortal: "ਕਿਸਾਨ ਪੋਰਟਲ",
+        routeOptimizer: "🚚 ਰੂਟ ਆਪਟੀਮਾਈਜ਼ਰ",
+        myOrders: "ਮੇਰੇ ਆਰਡਰ",
+        cart: "🛒 ਕਾਰਟ",
+        login: "ਲਾਗਇਨ",
+        signUp: "ਸਾਈਨ ਅੱਪ",
+        register: "ਰਜਿਸਟਰ ਕਰੋ",
+        logout: "ਲਾਗਆਉਟ",
+        searchPlaceholder: "ਕਣਕ, ਟਮਾਟਰ, ਦੁੱਧ, ਫ਼ਸਲਾਂ ਖੋਜੋ...",
+        heroTitle: "ਸਿੱਧਾ ਖੇਤੀਬਾੜੀ ਮੰਡੀ (ਕਿਸਾਨ ਤੋਂ ਖਪਤਕਾਰ)",
+        heroSubtitle: "ਸਥਾਨਕ ਕਿਸਾਨਾਂ ਅਤੇ ਰਜਿਸਟਰਡ ਐਫਪੀਓ (FPO) ਤੋਂ ਬਿਨਾਂ ਕਿਸੇ ਵਿਚੋਲੇ ਦੇ ਤਾਜ਼ੀਆਂ ਫ਼ਸਲਾਂ, ਸਬਜ਼ੀਆਂ, ਫਲ ਅਤੇ ਦੁੱਧ ਸਿੱਧਾ ਖਰੀਦੋ।",
+        browseHarvest: "ਤਾਜ਼ੀ ਫ਼ਸਲ ਵੇਖੋ",
+        fpoHub: "ਐਫਪੀਓ ਥੋਕ ਕੇਂਦਰ",
+        filterMarketplace: "ਫਿਲਟਰ ਕਰੋ",
+        category: "ਸ਼੍ਰੇਣੀ (Category)",
+        allCategories: "ਸਾਰੀਆਂ ਵਸਤੂਆਂ",
+        grainsCategory: "ਅਨਾਜ ਅਤੇ ਦਾਣਾ",
+        vegetablesCategory: "ਤਾਜ਼ੀਆਂ ਸਬਜ਼ੀਆਂ",
+        fruitsCategory: "ਤਾਜ਼ੇ ਫਲ",
+        dairyCategory: "ਡੇਅਰੀ ਉਤਪਾਦ",
+        featuredListings: "ਮੁੱਖ ਖੇਤੀਬਾੜੀ ਉਤਪਾਦ",
+        showingItems: "ਉਤਪਾਦ ਵੇਖਾਏ ਗਏ",
+        addToCart: "🛒 ਕਾਰਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ",
+        buyNow: "⚡ ਹੁਣੇ ਖਰੀਦੋ",
+        addedToCartToast: "ਕਾਰਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤਾ ਗਿਆ!",
+        viewCart: "ਕਾਰਟ ਵੇਖੋ",
+        shoppingCart: "🛒 ਸ਼ਾਪਿੰਗ ਕਾਰਟ",
+        cartEmptyTitle: "ਤੁਹਾਡਾ ਕਾਰਟ ਇਸ ਵੇਲੇ ਖਾਲੀ ਹੈ 🛒",
+        cartEmptySubtitle: "ਖੇਤ ਵਿੱਚੋਂ ਤਾਜ਼ੀ ਵਾਢੀ ਤੁਹਾਡੀ ਉਡੀਕ ਕਰ ਰਹੀ ਹੈ।",
+        exploreProduce: "ਉਪਲਬਧ ਫ਼ਸਲਾਂ ਵੇਖੋ",
+        orderSummary: "ਆਰਡਰ ਦਾ ਸਾਰ",
+        produceSubtotal: "ਉਤਪਾਦ ਉਪ-ਜੋੜ",
+        deliveryFee: "ਸਿੱਧੀ ਫਾਰਮ ਡਿਲੀਵਰੀ ਫੀਸ",
+        estimatedTotal: "ਕੁੱਲ ਜੋੜ",
+        proceedCheckout: "ਚੈੱਕਆਉਟ ਲਈ ਅੱਗੇ ਵਧੋ ➔",
+        continueShopping: "← ਖਰੀਦਦਾਰੀ ਜਾਰੀ ਰੱਖੋ",
+        remove: "ਹਟਾਓ",
+        checkoutTitle: "ਸੁਰੱਖਿਅਤ ਫਾਰਮਡਾਇਰੈਕਟ ਚੈੱਕਆਉਟ",
+        customerDetails: "ਗਾਹਕ ਅਤੇ ਡਿਲੀਵਰੀ ਵੇਰਵੇ",
+        paymentMethod: "ਭੁਗਤਾਨ ਦਾ ਤਰੀਕਾ ਚੁਣੋ",
+        placeOrder: "ਸਿੱਧਾ ਆਰਡਰ ਕਰੋ 🌾",
+        farmerDashboard: "ਕਿਸਾਨ ਡੈਸ਼ਬੋਰਡ ਅਤੇ ਏਆਈ ਮੰਡੀ",
+        dashboardSubtitle: "ਆਪਣੀਆਂ ਸੂਚੀਆਂ ਪ੍ਰਬੰਧਿਤ ਕਰੋ, ਲਾਈਵ ਮੰਡੀ ਭਾਅ ਦੇਖੋ, ਰੂਟ ਆਪਟੀਮਾਈਜ਼ ਕਰੋ ਅਤੇ ਐਫਪੀਓ ਨਾਲ ਜੁੜੋ।",
+        addNewItem: "➕ ਨਵਾਂ ਉਤਪਾਦ ਜੋੜੋ",
+        myProducts: "📦 ਮੇਰੀਆਂ ਫ਼ਸਲਾਂ",
+        aiMandiPredictor: "🤖 ਏਆਈ ਮੰਡੀ ਭਾਅ",
+        fpoNetwork: "🏛️ ਐਫਪੀਓ ਨੈੱਟਵਰਕ",
+        listNewProduce: "ਵਿਕਰੀ ਲਈ ਨਵੀਂ ਉਪਜ ਜੋੜੋ",
+        itemName: "ਉਤਪਾਦ ਦਾ ਨਾਮ / ਸਿਰਲੇਖ",
+        pricePerUnit: "ਵੇਚਣ ਮੁੱਲ (₹)",
+        farmLocation: "ਖੇਤ ਦਾ ਸਥਾਨ / ਜ਼ਿਲ੍ਹਾ",
+        primaryPhone: "ਫ਼ੋਨ ਨੰਬਰ",
+        emailAddress: "ਈਮੇਲ ਪਤਾ",
+        password: "ਪਾਸਵਰਡ",
+        selectRole: "ਭੂਮਿਕਾ ਚੁਣੋ",
+        consumerRole: "ਖਪਤਕਾਰ / ਖਰੀਦਦਾਰ",
+        farmerRole: "ਕਿਸਾਨ / ਵਿਕਰੇਤਾ",
+        loginToAccount: "ਖਾਤੇ ਵਿੱਚ ਲਾਗਇਨ ਕਰੋ",
+        registerAccount: "ਖਾਤਾ ਰਜਿਸਟਰ ਕਰੋ",
+        guaranteeTitle: "🛡️ ਸਿੱਧੀ ਵਪਾਰ ਗਾਰੰਟੀ:",
+        guaranteeText: "ਹਰ ਖਰੀਦ ਦਾ 100% ਮੁੱਲ ਸਿੱਧਾ ਕਿਸਾਨਾਂ ਅਤੇ ਐਫਪੀਓ ਨੂੰ ਜਾਂਦਾ ਹੈ।"
+    },
+    mr: {
+        marketplace: "कृषी बाजार",
+        farmerHome: "शेतकरी होम",
+        farmerPortal: "शेतकरी पोर्टल",
+        routeOptimizer: "🚚 मार्ग ऑप्टिमायझर",
+        myOrders: "माझे ऑर्डर्स",
+        cart: "🛒 कार्ट",
+        login: "लॉग इन",
+        signUp: "नोंदणी करा",
+        register: "रजिस्टर करा",
+        logout: "लॉगआउट",
+        searchPlaceholder: "गहू, टोमॅटो, कांदा, फळे शोधा...",
+        heroTitle: "थेट शेतमाल बाजारपेठ (शेतकरी ते ग्राहक)",
+        heroSubtitle: "स्थानिक शेतकरी आणि नोंदणीकृत FPO कडून थेट ताजी पिके, फळे, भाज्या आणि दूध खरेदी करा, कोणत्याही मध्यस्थाशिवाय.",
+        browseHarvest: "ताजा शेतमाल पहा",
+        fpoHub: "FPO घाऊक केंद्र",
+        filterMarketplace: "फिल्टर करा",
+        category: "श्रेणी (Category)",
+        allCategories: "सर्व वस्तू",
+        grainsCategory: "धान्य आणि चारा",
+        vegetablesCategory: "ताज्या भाज्या",
+        fruitsCategory: "ताजी फळे",
+        dairyCategory: "दुग्धजन्य उत्पादने",
+        featuredListings: "प्रमुख कृषी उत्पादने",
+        showingItems: "उत्पादने दाखवत आहे",
+        addToCart: "🛒 कार्टमध्ये जोडा",
+        buyNow: "⚡ आता खरेदी करा",
+        addedToCartToast: "कार्टमध्ये जोडले गेले!",
+        viewCart: "कार्ट पहा",
+        shoppingCart: "🛒 खरेदी कार्ट",
+        cartEmptyTitle: "तुमची कार्ट सध्या रिकामी आहे 🛒",
+        cartEmptySubtitle: "शेतकऱ्यांकडून ताज्या उत्पादनांची कापणी तुमची वाट पाहत आहे.",
+        exploreProduce: "उपलब्ध शेतमाल पहा",
+        orderSummary: "ऑर्डर तपशील",
+        produceSubtotal: "उत्पादन उप-एकूण",
+        deliveryFee: "थेट शेत वितरण शुल्क",
+        estimatedTotal: "अंदाजे एकूण",
+        proceedCheckout: "सुरक्षित चेकआउटसाठी पुढे जा ➔",
+        continueShopping: "← खरेदी सुरू ठेवा",
+        remove: "काढून टाका",
+        checkoutTitle: "सुरक्षित फार्मडायरेक्ट चेकआउट",
+        customerDetails: "ग्राहक आणि वितरण तपशील",
+        paymentMethod: "पेमेंट पद्धत निवडा",
+        placeOrder: "थेट ऑर्डर करा 🌾",
+        farmerDashboard: "शेतकरी डॅशबोर्ड आणि एआय बाजार",
+        dashboardSubtitle: "आपली यादी व्यवस्थापित करा, थेट बाजारभाव पहा, मार्ग ऑप्टिमाइझ करा आणि FPO शी जोडा.",
+        addNewItem: "➕ नवीन उत्पादन जोडा",
+        myProducts: "📦 माझी पिके",
+        aiMandiPredictor: "🤖 एआय बाजार अंदाज",
+        fpoNetwork: "🏛️ FPO नेटवर्क",
+        listNewProduce: "विक्रीसाठी नवीन शेतमाल जोडा",
+        itemName: "उत्पादनाचे नाव / शीर्षक",
+        pricePerUnit: "विक्री किंमत (₹)",
+        farmLocation: "शेताचे ठिकाण / जिल्हा",
+        primaryPhone: "फोन नंबर",
+        emailAddress: "ईमेल पत्ता",
+        password: "पासवर्ड",
+        selectRole: "भूमिका निवडा",
+        consumerRole: "ग्राहक / खरेदीदार",
+        farmerRole: "शेतकरी / विक्रेता",
+        loginToAccount: "खात्यात लॉग इन करा",
+        registerAccount: "खाते नोंदणी करा",
+        guaranteeTitle: "🛡️ थेट व्यापार हमी:",
+        guaranteeText: "प्रत्येक खरेदीचे १००% मूल्य थेट शेतकरी आणि FPO ला जाते."
+    }
+};
+
+function getCurrentLanguage() {
+    return localStorage.getItem('appLanguage') || 'en';
 }
 
-function saveCart(cart) {
-    localStorage.setItem('farmCart', JSON.stringify(cart));
+function getTranslation(key) {
+    const lang = getCurrentLanguage();
+    return (translations[lang] && translations[lang][key]) || (translations['en'] && translations['en'][key]) || key;
+}
+
+function changeLanguage(lang) {
+    if (!translations[lang]) lang = 'en';
+    localStorage.setItem('appLanguage', lang);
+    applyLanguage(lang);
+}
+
+function applyLanguage(lang) {
+    if (!translations[lang]) lang = 'en';
+    const dict = translations[lang];
+
+    // Sync all language dropdowns on page
+    document.querySelectorAll('.lang-selector, #languageSelect').forEach(sel => {
+        sel.value = lang;
+    });
+
+    // Translate all elements with data-i18n attribute
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+            el.innerText = dict[key];
+        }
+    });
+
+    // Translate common navigation links if no data-i18n
+    document.querySelectorAll('nav a, header a').forEach(a => {
+        const txt = a.innerText.trim().toLowerCase();
+        if (txt === 'marketplace' || txt === 'मंडी बाज़ार' || txt === 'ਮੰਡੀ ਬਾਜ਼ਾਰ' || txt === 'कृषी बाजार') a.innerText = dict.marketplace;
+        else if (txt.includes('farmer portal') || txt.includes('किसान पोर्टल') || txt.includes('ਕਿਸਾਨ ਪੋਰਟਲ')) a.innerText = dict.farmerPortal;
+        else if (txt.includes('farmer home') || txt.includes('किसान होम') || txt.includes('ਕਿਸਾਨ ਹੋਮ')) a.innerText = dict.farmerHome;
+        else if (txt.includes('route optimizer') || txt.includes('रूट ऑप्टिमाइज़र')) a.innerText = dict.routeOptimizer;
+        else if (txt.includes('my orders') || txt.includes('मेरे ऑर्डर')) a.innerText = dict.myOrders;
+    });
+
+    // Translate search placeholders
+    const searchInputs = document.querySelectorAll('#headerSearchInput, input[placeholder*="wheat"], input[placeholder*="गेहूं"]');
+    searchInputs.forEach(input => {
+        input.placeholder = dict.searchPlaceholder;
+    });
+
+    // Translate buttons
+    document.querySelectorAll('.btn-add').forEach(btn => {
+        btn.innerText = dict.addToCart;
+    });
+
+    // Translate Cart button in nav
+    document.querySelectorAll('.cart-btn').forEach(btn => {
+        const countSpan = btn.querySelector('#cart-count, .cart-count');
+        const count = countSpan ? countSpan.innerText : '0';
+        btn.innerHTML = `🛒 ${dict.cart.replace(/^[^\w\s\u0900-\u0D7F]+/, '').trim()} (<span id="cart-count">${count}</span>)`;
+    });
+
+    // Translate mobile bottom nav items
+    document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item').forEach(item => {
+        const spans = item.querySelectorAll('span');
+        if (spans.length >= 2) {
+            const span = spans[1];
+            const txt = span.innerText.trim().toLowerCase();
+            if (txt.includes('market') || txt.includes('बाज़ार') || txt.includes('ਮੰਡੀ')) span.innerText = dict.marketplace.split(' ')[0] || "Market";
+            else if (txt.includes('farmer') || txt.includes('किसान') || txt.includes('ਕਿਸਾਨ')) span.innerText = dict.farmerHome.split(' ')[0] || "Farmer";
+            else if (txt.includes('routes') || txt.includes('मार्ग') || txt.includes('ਰੂਟ')) span.innerText = dict.routeOptimizer.split(' ')[1] || "Routes";
+            else if (txt.includes('orders') || txt.includes('ऑर्डर') || txt.includes('ਆਰਡਰ')) span.innerText = dict.myOrders.split(' ')[1] || "Orders";
+            else if (txt.includes('cart') || txt.includes('कार्ट') || txt.includes('ਕਾਰਟ')) span.innerText = dict.cart.split(' ')[1] || "Cart";
+        }
+    });
+
+    // Refresh dynamic cart count / labels
+    updateCartBadge();
+
+    // Re-render cart page if on cart.html
+    const cartList = document.getElementById('cartItemsList') || document.getElementById('cart-list');
+    if (cartList) {
+        renderCartPage();
+    }
+}
+
+// Auto-apply language on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const savedLang = getCurrentLanguage();
+    applyLanguage(savedLang);
+});
+
+// --- UNIFIED & PERSISTENT CART MANAGEMENT ---
+function getUnifiedCart() {
+    try {
+        let farm = [];
+        let items = [];
+        const rawFarm = localStorage.getItem('farmCart');
+        const rawItems = localStorage.getItem('cartItems');
+        if (rawFarm) {
+            try {
+                const parsed = JSON.parse(rawFarm);
+                if (Array.isArray(parsed)) farm = parsed;
+            } catch(e) {}
+        }
+        if (rawItems) {
+            try {
+                const parsed = JSON.parse(rawItems);
+                if (Array.isArray(parsed)) items = parsed;
+            } catch(e) {}
+        }
+        if (farm.length > 0) return farm;
+        if (items.length > 0) return items;
+    } catch (e) {
+        console.error("Cart parsing error:", e);
+    }
+    return [];
+}
+
+function saveUnifiedCart(cart) {
+    try {
+        const safeCart = Array.isArray(cart) ? cart : [];
+        localStorage.setItem('farmCart', JSON.stringify(safeCart));
+        localStorage.setItem('cartItems', JSON.stringify(safeCart));
+    } catch (e) {
+        console.error("Cart save error:", e);
+    }
     updateCartBadge();
 }
 
-function updateCartBadge() {
-    const cart = getCart();
-    const count = cart.reduce((acc, item) => acc + item.quantity, 0);
-    const badge = document.getElementById('cart-count');
-    if (badge) badge.innerText = count;
+function getCart() {
+    return getUnifiedCart();
 }
 
-function addToCart(productId) {
-    const product = productsData.find(p => p.id === productId);
-    if (!product) return;
+function saveCart(cart) {
+    saveUnifiedCart(cart);
+}
 
-    let cart = getCart();
-    const existing = cart.find(item => item.id === productId);
+function updateCartBadge() {
+    const cart = getUnifiedCart();
+    const count = cart.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0);
+    const badges = document.querySelectorAll('#cart-count, .cart-count, #mobile-cart-count, .mobile-cart-badge');
+    badges.forEach(b => { if (b) b.innerText = count; });
+}
 
-    if (existing) {
-        existing.quantity += 1;
-    } else {
-        cart.push({ ...product, quantity: 1 });
+function showCartToast(message, cartUrl = 'cart.html') {
+    let toast = document.getElementById('cartToastNotification');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'cartToastNotification';
+        toast.className = 'cart-toast';
+        document.body.appendChild(toast);
+    }
+    const viewCartText = getTranslation('viewCart') || "View Cart";
+    toast.innerHTML = `
+        <span>🛒 ${message}</span>
+        <a href="${cartUrl}" style="background:#52b788; color:#1b4332; padding:4px 10px; border-radius:6px; text-decoration:none; font-weight:700; margin-left:8px;">${viewCartText} ➔</a>
+    `;
+    toast.style.display = 'flex';
+    clearTimeout(window._cartToastTimeout);
+    window._cartToastTimeout = setTimeout(() => {
+        if (toast) toast.style.display = 'none';
+    }, 4000);
+}
+
+function addToCart(productId, productObj = null) {
+    let product = productObj;
+
+    if (!product && typeof productsData !== 'undefined' && Array.isArray(productsData)) {
+        product = productsData.find(p => String(p.id) === String(productId));
     }
 
-    saveCart(cart);
-    alert(`${product.title} added to cart!`);
+    if (!product) {
+        // Find product card from DOM if it was loaded dynamically from backend
+        const card = document.querySelector(`[data-product-id="${productId}"]`);
+        if (card) {
+            const title = card.querySelector('.product-title, h4, h3')?.innerText || "Fresh Farm Produce";
+            const priceText = card.querySelector('.product-price, strong, h4')?.innerText || "100";
+            const price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || 100;
+            const img = card.querySelector('img')?.src || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=500&q=80';
+            const cat = card.querySelector('.product-category, span')?.innerText || "Produce";
+            const loc = card.querySelector('.product-seller, small')?.innerText || "Local Farm";
+            product = { id: productId, title, price, image: img, category: cat, sellerLocation: loc };
+        }
+    }
+
+    if (!product) {
+        product = {
+            id: productId,
+            title: "Fresh Farm Harvest",
+            price: 500,
+            image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=500&q=80",
+            category: "Produce",
+            sellerLocation: "Local Farm"
+        };
+    }
+
+    let cart = getUnifiedCart();
+    const existing = cart.find(item => String(item.id) === String(productId));
+
+    if (existing) {
+        existing.quantity = (Number(existing.quantity) || 1) + 1;
+    } else {
+        cart.push({
+            id: String(product.id),
+            title: product.title,
+            price: Number(product.price) || 100,
+            quantity: 1,
+            image: product.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=500&q=80',
+            category: product.category || 'Produce',
+            sellerLocation: product.sellerLocation || product.location || 'Local Farm'
+        });
+    }
+
+    saveUnifiedCart(cart);
+
+    // Asynchronously notify backend database
+    try {
+        fetch('/api/cart/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ product_id: String(productId), quantity: 1 })
+        }).catch(() => {});
+    } catch(e) {}
+
+    const addedMsg = `${product.title} ${getTranslation('addedToCartToast')}`;
+    showCartToast(addedMsg);
 }
 
 function removeFromCart(productId) {
-    let cart = getCart();
-    cart = cart.filter(item => item.id !== productId);
-    saveCart(cart);
+    let cart = getUnifiedCart();
+    cart = cart.filter(item => String(item.id) !== String(productId));
+    saveUnifiedCart(cart);
+
+    try {
+        fetch(`/api/cart/remove/${encodeURIComponent(productId)}`, { method: 'DELETE' }).catch(() => {});
+    } catch(e) {}
+
     renderCartPage();
 }
 
 function changeQty(productId, delta) {
-    let cart = getCart();
-    const item = cart.find(i => i.id === productId);
+    let cart = getUnifiedCart();
+    const item = cart.find(i => String(i.id) === String(productId));
     if (item) {
-        item.quantity += delta;
+        item.quantity = (Number(item.quantity) || 1) + delta;
         if (item.quantity <= 0) {
-            cart = cart.filter(i => i.id !== productId);
+            cart = cart.filter(i => String(i.id) !== String(productId));
         }
     }
-    saveCart(cart);
+    saveUnifiedCart(cart);
+
+    try {
+        fetch('/api/cart/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ product_id: String(productId), delta: delta })
+        }).catch(() => {});
+    } catch(e) {}
+
     renderCartPage();
 }
 
-// Render Cart Page Data
-function renderCartPage() {
-    const cartList = document.getElementById('cart-list');
+// Backward-compatible index-based helpers
+window.changeQuantity = function(index, delta) {
+    const cart = getUnifiedCart();
+    if (cart[index]) {
+        changeQty(cart[index].id, delta);
+    }
+};
+
+window.removeItem = function(index) {
+    const cart = getUnifiedCart();
+    if (cart[index]) {
+        removeFromCart(cart[index].id);
+    }
+};
+
+// Render Cart Page Data (supports all HTML naming conventions)
+async function renderCartPage() {
+    const cartList = document.getElementById('cartItemsList') || document.getElementById('cart-list');
     if (!cartList) return;
 
-    const cart = getCart();
-    const itemCountSpan = document.getElementById('cart-item-count');
-    const subtotalEl = document.getElementById('cart-subtotal');
-    const grandTotalEl = document.getElementById('cart-grand-total');
+    let cart = getUnifiedCart();
 
-    if (itemCountSpan) itemCountSpan.innerText = cart.reduce((a, b) => a + b.quantity, 0);
+    // If local cart is empty, attempt one-time restore from backend database
+    if (cart.length === 0 && !window._cartBackendChecked) {
+        window._cartBackendChecked = true;
+        try {
+            const res = await fetch('/api/cart');
+            if (res.ok) {
+                const backendItems = await res.json();
+                if (Array.isArray(backendItems) && backendItems.length > 0) {
+                    cart = backendItems.map(it => ({
+                        id: String(it.product_id),
+                        title: it.title || "Fresh Farm Produce",
+                        price: Number(it.price) || 100,
+                        quantity: Number(it.quantity) || 1,
+                        image: it.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=500&q=80',
+                        category: it.category || 'Produce',
+                        sellerLocation: it.sellerLocation || 'Local Farm'
+                    }));
+                    saveUnifiedCart(cart);
+                }
+            }
+        } catch (e) {
+            console.warn("Backend cart sync fallback:", e);
+        }
+    }
+
+    const summaryCard = document.getElementById('summaryCard');
+    const itemCountSpan = document.getElementById('cart-item-count');
+    const subtotalEl = document.getElementById('subTotal') || document.getElementById('cart-subtotal');
+    const grandTotalEl = document.getElementById('grandTotal') || document.getElementById('cart-grand-total');
+
+    const totalQty = cart.reduce((a, b) => a + (Number(b.quantity) || 1), 0);
+    if (itemCountSpan) itemCountSpan.innerText = totalQty;
 
     if (cart.length === 0) {
-        cartList.innerHTML = `<p style="padding:2rem; text-align:center; color:var(--text-muted);">Your cart is currently empty. <br><br><a href="index.html#marketplace" class="btn-submit" style="display:inline-block; text-decoration:none;">Browse Marketplace</a></p>`;
-        if (subtotalEl) subtotalEl.innerText = `₹0`;
-        if (grandTotalEl) grandTotalEl.innerText = `₹0`;
+        cartList.innerHTML = `
+            <div style="text-align: center; padding: 3rem; background: #fff; border-radius: 12px; border: 1px dashed var(--border);">
+                <h3 style="color:#2e7d32; font-size:1.4rem; margin-bottom:8px;">${getTranslation('cartEmptyTitle')}</h3>
+                <p style="color: var(--text-muted); margin-bottom:1.5rem;">${getTranslation('cartEmptySubtitle')}</p>
+                <a href="consumer.html" class="btn-submit" style="display: inline-block; padding: 10px 24px; text-decoration: none; font-weight:700;">${getTranslation('exploreProduce')} ➔</a>
+            </div>
+        `;
+        if (summaryCard) summaryCard.style.display = "none";
+        if (subtotalEl) subtotalEl.innerText = "0";
+        if (grandTotalEl) grandTotalEl.innerText = "0";
         return;
     }
 
-    let subtotal = 0;
-    cartList.innerHTML = '';
+    if (summaryCard) summaryCard.style.display = "block";
 
-    cart.forEach(item => {
-        const itemTotal = item.price * item.quantity;
+    let html = "";
+    let subtotal = 0;
+
+    cart.forEach((item, index) => {
+        const qty = Number(item.quantity) || 1;
+        const price = Number(item.price) || 0;
+        const itemTotal = price * qty;
         subtotal += itemTotal;
 
-        const card = document.createElement('div');
-        card.className = 'cart-item-card';
-        card.innerHTML = `
-            <img src="${item.image}" class="cart-item-img" alt="${item.title}">
-            <div class="cart-item-info">
-                <div class="cart-item-title">${item.title}</div>
-                <div class="cart-item-price">₹${item.price.toLocaleString('en-IN')} x ${item.quantity} = ₹${itemTotal.toLocaleString('en-IN')}</div>
-                <small style="color:var(--text-muted)">⏱️ Est. Delivery: ${item.estimatedDeliveryDays || '2-3 Days'}</small>
+        html += `
+            <div class="cart-item-card">
+                <img src="${item.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=500&q=80'}" class="cart-item-img" alt="${item.title}">
+                <div class="cart-item-info">
+                    <div class="cart-item-title">${item.title}</div>
+                    <div class="cart-item-price">₹${price.toLocaleString('en-IN')} each</div>
+                    <small style="color: var(--text-muted);">📍 ${item.sellerLocation || 'Local Farm'}</small>
+                </div>
+                <div class="cart-qty-controls">
+                    <button class="btn-qty" onclick="changeQty('${item.id}', -1)">-</button>
+                    <span style="font-weight: 700; min-width: 28px; text-align: center;">${qty}</span>
+                    <button class="btn-qty" onclick="changeQty('${item.id}', 1)">+</button>
+                    <strong style="margin: 0 12px; color: var(--primary); font-size: 1.05rem;">₹${itemTotal.toLocaleString('en-IN')}</strong>
+                    <button class="btn-remove" onclick="removeFromCart('${item.id}')">${getTranslation('remove') || 'Remove'}</button>
+                </div>
             </div>
-            <div class="cart-qty-controls">
-                <button class="btn-qty" onclick="changeQty('${item.id}', -1)">-</button>
-                <span>${item.quantity}</span>
-                <button class="btn-qty" onclick="changeQty('${item.id}', 1)">+</button>
-            </div>
-            <button class="btn-remove" onclick="removeFromCart('${item.id}')">Remove</button>
         `;
-        cartList.appendChild(card);
     });
 
-    const freight = 150;
-    if (subtotalEl) subtotalEl.innerText = `₹${subtotal.toLocaleString('en-IN')}`;
-    if (grandTotalEl) grandTotalEl.innerText = `₹${(subtotal + freight).toLocaleString('en-IN')}`;
+    cartList.innerHTML = html;
+    const deliveryFee = 50;
+    if (subtotalEl) subtotalEl.innerText = subtotal.toLocaleString('en-IN');
+    if (grandTotalEl) grandTotalEl.innerText = (subtotal + deliveryFee).toLocaleString('en-IN');
 }
 
 async function processOrder() {
-    const cart = getCart();
+    const cart = getUnifiedCart();
     if (cart.length === 0) {
-        alert("Your cart is empty!");
+        alert("Your cart is empty! Please add items before placing an order.");
         return;
     }
-    const selectedMethod = document.querySelector('input[name="payment"]:checked')?.value || 'upi';
-    const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    const freight = 150;
+    const selectedMethod = document.querySelector('input[name="payment"]:checked, input[name="paymentMethod"]:checked')?.value || 'upi';
+    const subtotal = cart.reduce((acc, item) => acc + (Number(item.price) || 0) * (Number(item.quantity) || 1), 0);
+    const freight = 50;
     const grandTotal = subtotal + freight;
     const userEmail = localStorage.getItem('userEmail') || 'guest@farmdirect.com';
-    const userName = localStorage.getItem('userName') || 'Valued Customer';
+    const userName = localStorage.getItem('userName') || 'Direct Farm Buyer';
 
     try {
         const res = await fetch("/api/orders", {
@@ -309,7 +835,7 @@ async function processOrder() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 customer_name: userName,
-                phone: localStorage.getItem('userPhone') || "+91 9876543210",
+                phone: localStorage.getItem('userPhone') || "+91 98765 43210",
                 address: localStorage.getItem('userLocation') || "Direct Farm Hub",
                 city: "Local District",
                 pincode: "110001",
@@ -319,14 +845,18 @@ async function processOrder() {
             })
         });
         const result = await res.json();
-        alert(`Order Placed Successfully via ${selectedMethod.toUpperCase()}! Thank you for choosing FarmDirect.`);
+        alert(`Order Placed Successfully via ${selectedMethod.toUpperCase()}! Thank you for supporting direct farming.`);
     } catch (err) {
-        console.warn("Offline order fallback:", err);
-        alert(`Order Placed Successfully via ${selectedMethod.toUpperCase()}! Thank you for choosing FarmDirect.`);
+        console.warn("Order sync:", err);
+        alert(`Order Placed Successfully via ${selectedMethod.toUpperCase()}! Thank you for supporting direct farming.`);
     }
 
     localStorage.removeItem('farmCart');
-    window.location.href = 'index.html';
+    localStorage.removeItem('cartItems');
+    try {
+        fetch('/api/cart/clear', { method: 'DELETE' }).catch(() => {});
+    } catch(e) {}
+    window.location.href = 'orders.html';
 }
 
 // Symmetrical Grid Rendering
@@ -348,7 +878,10 @@ function renderMarketplace(dataToRender = productsData.slice(0, 8)) {
     dataToRender.forEach(product => {
         const card = document.createElement('div');
         card.className = 'product-card';
+        card.setAttribute('data-product-id', product.id);
         card.onclick = () => window.open(`product.html?id=${product.id}`, '_blank');
+
+        const btnText = getTranslation('addToCart') || "🛒 Add to Cart";
 
         card.innerHTML = `
             <img src="${product.image}" alt="${product.title}" class="product-img">
@@ -358,7 +891,7 @@ function renderMarketplace(dataToRender = productsData.slice(0, 8)) {
                 <div class="product-seller">📍 ${product.sellerLocation || product.location || 'Local Farm'}</div>
                 <div class="product-bottom">
                     <span class="product-price">₹${product.price.toLocaleString('en-IN')}</span>
-                    <button class="btn-add" onclick="event.stopPropagation(); addToCart('${product.id}')">🛒 Add to Cart</button>
+                    <button class="btn-add" onclick="event.stopPropagation(); addToCart('${product.id}')">${btnText}</button>
                 </div>
             </div>
         `;
@@ -562,7 +1095,9 @@ async function handleAuthSubmit(event, type) {
         name = email.split('@')[0];
     } else {
         name = document.querySelector('#signupForm input[placeholder*="Name"]')?.value || "Registered User";
-        phone = document.querySelector('#signupForm input[type="tel"]')?.value || "";
+        phone = document.querySelector('#signupForm input[type="tel"]')?.value || "+91 98765 43210";
+        const locInput = document.querySelector('#signupForm #signupLocation, #signupForm input[placeholder*="Location"], #signupForm input[placeholder*="District"]');
+        location = locInput ? locInput.value.trim() : "Ludhiana, Punjab";
         email = document.querySelector('#signupForm input[type="email"]')?.value || "user@farmdirect.com";
         password = document.querySelector('#signupForm input[type="password"]')?.value || "";
     }
@@ -571,7 +1106,7 @@ async function handleAuthSubmit(event, type) {
         const endpoint = type === 'Login' ? '/api/login' : '/api/register';
         const bodyPayload = type === 'Login' 
             ? { email, password } 
-            : { name, email, password, role: selectedRole };
+            : { name, email, password, role: selectedRole, phone, location };
             
         const res = await fetch(endpoint, {
             method: 'POST',
@@ -583,6 +1118,9 @@ async function handleAuthSubmit(event, type) {
             localStorage.setItem("userName", data.user.name || name);
             localStorage.setItem("userEmail", data.user.email || email);
             localStorage.setItem("userRole", data.user.role || selectedRole);
+            if (data.user.phone) localStorage.setItem("userPhone", data.user.phone);
+            if (data.user.location) localStorage.setItem("userLocation", data.user.location);
+            if (data.user.created_at) localStorage.setItem("userCreatedAt", data.user.created_at);
         }
     } catch (e) {
         console.warn("Backend auth offline fallback:", e);
@@ -592,7 +1130,8 @@ async function handleAuthSubmit(event, type) {
     localStorage.setItem("userRole", selectedRole);
     if (!localStorage.getItem("userName")) localStorage.setItem("userName", name);
     if (!localStorage.getItem("userEmail")) localStorage.setItem("userEmail", email);
-    if (phone) localStorage.setItem("userPhone", phone);
+    if (phone && !localStorage.getItem("userPhone")) localStorage.setItem("userPhone", phone);
+    if (location && !localStorage.getItem("userLocation")) localStorage.setItem("userLocation", location);
     
     alert(`${type} Successful as ${selectedRole.toUpperCase()}!`);
     

@@ -144,11 +144,23 @@
         <div class="nav-container">
             <a href="consumer.html" class="logo">🌾 FarmDirect</a>
             <nav class="nav-links">
-                <a href="consumer.html">Marketplace</a>
-                <a href="dashboard.html">Farmer Portal</a>
-                <a href="logistics.html" class="active">🚚 Route Optimizer</a>
-                <a href="orders.html">My Orders</a>
-                <button class="cart-btn" onclick="window.location.href='cart.html'">🛒 Cart</button>
+                <a href="consumer.html" data-i18n="marketplace">Marketplace</a>
+                <a href="dashboard.html" data-i18n="farmerPortal">Farmer Portal</a>
+                <a href="logistics.html" class="active" data-i18n="routeOptimizer">🚚 Route Optimizer</a>
+                <a href="orders.html" data-i18n="myOrders">My Orders</a>
+
+                <!-- Multi-Language Selector -->
+                <div class="lang-selector-container">
+                    <span class="lang-globe-icon">🌐</span>
+                    <select class="lang-selector" onchange="changeLanguage(this.value)" aria-label="Select Language">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी (Hindi)</option>
+                        <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                        <option value="mr">मराठी (Marathi)</option>
+                    </select>
+                </div>
+
+                <button class="cart-btn" onclick="window.location.href='cart.html'">🛒 Cart (<span id="cart-count">0</span>)</button>
             </nav>
         </div>
     </header>
@@ -576,5 +588,31 @@
             alert(`Carrier Assigned Successfully! Route ${currentOptimizedResult.route_code} is booked with GPS Telemetry and cold-chain temperature safeguards.`);
         }
     </script>
+
+    <!-- Mobile Phone Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav">
+        <a href="consumer.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🌾</span>
+            <span>Market</span>
+        </a>
+        <a href="dashboard.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">👨‍🌾</span>
+            <span>Farmer</span>
+        </a>
+        <a href="logistics.html" class="mobile-nav-item active">
+            <span class="mobile-nav-icon">🚚</span>
+            <span>Routes</span>
+        </a>
+        <a href="orders.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">📦</span>
+            <span>Orders</span>
+        </a>
+        <a href="cart.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🛒</span>
+            <span>Cart</span>
+            <span class="mobile-cart-badge" id="mobile-cart-count">0</span>
+        </a>
+    </nav>
+    <script src="script.js"></script>
 </body>
 </html>

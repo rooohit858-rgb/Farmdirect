@@ -13,26 +13,37 @@
 
     <div class="auth-card-3d" id="auth3dCard">
         <div class="auth-header">
-            <a href="home.html" class="auth-logo">🌾 FarmDirect</a>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <a href="home.html" class="auth-logo">🌾 FarmDirect</a>
+                <div class="lang-selector-container" style="background: #e8f5e9; border: 1px solid #c8e6c9;">
+                    <span class="lang-globe-icon">🌐</span>
+                    <select class="lang-selector" onchange="changeLanguage(this.value)" aria-label="Select Language" style="color: #1b4332;">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी (Hindi)</option>
+                        <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                        <option value="mr">मराठी (Marathi)</option>
+                    </select>
+                </div>
+            </div>
             <p>Access your agricultural trade account</p>
         </div>
 
         <div class="auth-tabs">
-            <button class="auth-tab active" id="loginTabBtn" onclick="switchAuthTab('login')">Log In</button>
-            <button class="auth-tab" id="signupTabBtn" onclick="switchAuthTab('signup')">Register</button>
+            <button class="auth-tab active" id="loginTabBtn" onclick="switchAuthTab('login')" data-i18n="login">Log In</button>
+            <button class="auth-tab" id="signupTabBtn" onclick="switchAuthTab('signup')" data-i18n="register">Register</button>
         </div>
 
         <!-- Login Form -->
         <form id="loginForm" class="auth-form" onsubmit="handleLoginSubmit(event)">
             <div class="form-group">
-                <label>Email Address</label>
+                <label data-i18n="emailAddress">Email Address</label>
                 <input type="email" id="loginEmail" class="form-control" placeholder="user@farmdirect.com" required>
             </div>
             <div class="form-group">
-                <label>Password</label>
+                <label data-i18n="password">Password</label>
                 <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="btn-submit">Log In to Account</button>
+            <button type="submit" class="btn-submit" data-i18n="loginToAccount">Log In to Account</button>
         </form>
 
         <!-- Sign Up Form -->
@@ -44,6 +55,10 @@
             <div class="form-group">
                 <label>Primary Phone Number</label>
                 <input type="tel" id="signupPhone" class="form-control" placeholder="+91 98765 43210" required>
+            </div>
+            <div class="form-group">
+                <label>Farm Location / District, State</label>
+                <input type="text" id="signupLocation" class="form-control" placeholder="e.g. Ludhiana, Punjab or Nashik, Maharashtra" required>
             </div>
             <div class="form-group">
                 <label>Email Address</label>
@@ -117,16 +132,18 @@
                 const data = await response.json();
 
                 if (response.ok && data.status === 'success') {
+                    const u = data.user || {};
                     localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('userRole', data.user.role || 'consumer');
-                    localStorage.setItem('userName', data.user.name || email.split('@')[0]);
-                    localStorage.setItem('userEmail', data.user.email || email);
-                    if (data.user.phone) localStorage.setItem('userPhone', data.user.phone);
-                    if (data.user.location) localStorage.setItem('userLocation', data.user.location);
+                    localStorage.setItem('userRole', u.role || 'consumer');
+                    localStorage.setItem('userName', u.name || email.split('@')[0]);
+                    localStorage.setItem('userEmail', u.email || email);
+                    localStorage.setItem('userPhone', u.phone || '');
+                    localStorage.setItem('userLocation', u.location || '');
+                    localStorage.setItem('userCreatedAt', u.created_at || '');
 
-                    alert('Login Successful! Welcome, ' + (data.user.name || 'User'));
+                    alert('Login Successful! Welcome, ' + (u.name || 'User'));
                     
-                    const role = (data.user.role || '').toLowerCase();
+                    const role = (u.role || '').toLowerCase();
                     if (role === 'farmer') {
                         window.location.replace('dashboard.html');
                     } else {
@@ -156,6 +173,7 @@
             const emailEl = document.getElementById('signupEmail');
             const passEl = document.getElementById('signupPassword');
             const phoneEl = document.getElementById('signupPhone');
+            const locationEl = document.getElementById('signupLocation');
             const roleEl = document.getElementById('userRole');
 
             const payload = {
@@ -163,8 +181,8 @@
                 email: emailEl ? emailEl.value.trim() : "",
                 password: passEl ? passEl.value : "",
                 role: roleEl ? roleEl.value.trim().toLowerCase() : "consumer",
-                phone: phoneEl ? phoneEl.value.trim() : "",
-                location: "India"
+                phone: phoneEl ? phoneEl.value.trim() : "+91 98765 43210",
+                location: locationEl ? locationEl.value.trim() : "Ludhiana, Punjab"
             };
 
             try {
@@ -177,15 +195,18 @@
                 const data = await response.json();
 
                 if (response.ok && data.status === 'success') {
+                    const u = data.user || payload;
                     localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('userRole', payload.role);
-                    localStorage.setItem('userName', payload.name);
-                    localStorage.setItem('userEmail', payload.email);
-                    if (payload.phone) localStorage.setItem('userPhone', payload.phone);
+                    localStorage.setItem('userRole', u.role || payload.role);
+                    localStorage.setItem('userName', u.name || payload.name);
+                    localStorage.setItem('userEmail', u.email || payload.email);
+                    localStorage.setItem('userPhone', u.phone || payload.phone || '');
+                    localStorage.setItem('userLocation', u.location || payload.location || '');
+                    if (u.created_at) localStorage.setItem('userCreatedAt', u.created_at);
 
-                    alert('Registration Successful! Welcome, ' + payload.name);
+                    alert('Registration Successful! Welcome, ' + (u.name || payload.name));
 
-                    const role = payload.role.toLowerCase();
+                    const role = (u.role || payload.role).toLowerCase();
                     if (role === 'farmer') {
                         window.location.replace('dashboard.html');
                     } else {
@@ -200,6 +221,8 @@
                 localStorage.setItem('userRole', payload.role);
                 localStorage.setItem('userName', payload.name);
                 localStorage.setItem('userEmail', payload.email);
+                localStorage.setItem('userPhone', payload.phone);
+                localStorage.setItem('userLocation', payload.location);
                 alert('Offline Mode: Registered as ' + payload.role.toUpperCase());
                 window.location.replace(payload.role === 'farmer' ? 'dashboard.html' : 'consumer.html');
             }

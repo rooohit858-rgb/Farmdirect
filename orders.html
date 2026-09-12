@@ -27,18 +27,28 @@
     <header>
         <a href="consumer.html" class="logo">🌾 FarmDirect Order History</a>
         <div style="display: flex; gap: 10px; align-items: center;">
-            <a href="logistics.html" class="btn-back" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);">🚚 Route Optimizer</a>
-            <a href="consumer.html" class="btn-back">← Back to Marketplace</a>
+            <div class="lang-selector-container">
+                <span class="lang-globe-icon">🌐</span>
+                <select class="lang-selector" onchange="changeLanguage(this.value)" aria-label="Select Language">
+                    <option value="en">English</option>
+                    <option value="hi">हिंदी (Hindi)</option>
+                    <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                    <option value="mr">मराठी (Marathi)</option>
+                </select>
+            </div>
+            <a href="logistics.html" class="btn-back" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);" data-i18n="routeOptimizer">🚚 Route Optimizer</a>
+            <a href="consumer.html" class="btn-back" data-i18n="marketplace">← Back to Marketplace</a>
         </div>
     </header>
 
     <div class="container">
-        <h2 style="color: #1b5e20; margin-bottom: 1.5rem;">📦 Your Placed Orders & Live Tracking</h2>
+        <h2 style="color: #1b5e20; margin-bottom: 1.5rem;" data-i18n="myOrders">📦 Your Placed Orders & Live Tracking</h2>
         <div id="ordersContainer">
             <p>Loading your orders...</p>
         </div>
     </div>
 
+    <script src="script.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", async () => {
             const container = document.getElementById('ordersContainer');
@@ -102,5 +112,30 @@
             }
         });
     </script>
+
+    <!-- Mobile Phone Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav">
+        <a href="consumer.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🌾</span>
+            <span>Market</span>
+        </a>
+        <a href="dashboard.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">👨‍🌾</span>
+            <span>Farmer</span>
+        </a>
+        <a href="logistics.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🚚</span>
+            <span>Routes</span>
+        </a>
+        <a href="orders.html" class="mobile-nav-item active">
+            <span class="mobile-nav-icon">📦</span>
+            <span>Orders</span>
+        </a>
+        <a href="cart.html" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🛒</span>
+            <span>Cart</span>
+            <span class="mobile-cart-badge" id="mobile-cart-count">0</span>
+        </a>
+    </nav>
 </body>
 </html>

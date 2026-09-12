@@ -508,6 +508,14 @@ class OrderCreateSchema(BaseModel):
     grand_total: float
     user_email: Optional[str] = "guest@farmdirect.com"
 
+class CartItemAdd(BaseModel):
+    product_id: str
+    quantity: Optional[int] = 1
+
+class CartItemUpdate(BaseModel):
+    product_id: str
+    delta: int
+
 # --- API STATUS & HEALTH (SUPABASE MONITOR) ---
 @app.get("/api/health")
 def health_check(db: Session = Depends(get_db)):
@@ -580,20 +588,79 @@ def get_products(category: Optional[str] = None, query: Optional[str] = None, se
         } for p in products
     ]
 
+# --- CART MANAGEMENT ---
+@app.get("/api/cart")
+def get_cart_items(db: Session = Depends(get_db)):
+    items = db.query(DBCartItem).all()
+    results = []
+    for it in items:
+        p = db.query(DBProduct).filter(DBProduct.id == it.product_id).first()
+        results.append({
+            "id": it.id,
+            "product_id": it.product_id,
+            "quantity": it.quantity,
+            "title": p.title if p else "Fresh Farm Produce",
+            "price": p.price if p else 100.0,
+            "image": p.image if p else "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=500&q=80",
+            "category": p.category if p else "Produce",
+            "sellerLocation": p.seller_location if p else "Local Farm"
+        })
+    return results
+
+@app.post("/api/cart/add")
+def add_cart_item(payload: CartItemAdd, db: Session = Depends(get_db)):
+    existing = db.query(DBCartItem).filter(DBCartItem.product_id == payload.product_id).first()
+    if existing:
+        existing.quantity += (payload.quantity or 1)
+    else:
+        new_item = DBCartItem(product_id=payload.product_id, quantity=payload.quantity or 1)
+        db.add(new_item)
+    db.commit()
+    total_count = sum(i.quantity for i in db.query(DBCartItem).all())
+    return {"status": "success", "message": "Item added to cart", "cart_count": total_count}
+
+@app.post("/api/cart/update")
+def update_cart_item(payload: CartItemUpdate, db: Session = Depends(get_db)):
+    existing = db.query(DBCartItem).filter(DBCartItem.product_id == payload.product_id).first()
+    if existing:
+        existing.quantity += payload.delta
+        if existing.quantity <= 0:
+            db.delete(existing)
+        db.commit()
+    return {"status": "success", "message": "Cart updated"}
+
+@app.delete("/api/cart/remove/{product_id}")
+def remove_cart_item(product_id: str, db: Session = Depends(get_db)):
+    db.query(DBCartItem).filter(DBCartItem.product_id == product_id).delete()
+    db.commit()
+    return {"status": "success", "message": "Item removed from cart"}
+
+@app.delete("/api/cart/clear")
+def clear_cart(db: Session = Depends(get_db)):
+    db.query(DBCartItem).delete()
+    db.commit()
+    return {"status": "success", "message": "Cart cleared"}
+
 # --- USER AUTHENTICATION & PROFILES ---
 @app.post("/api/register")
 def register_user(payload: UserRegister, db: Session = Depends(get_db)):
-    existing_user = db.query(DBUser).filter(DBUser.email == payload.email).first()
+    clean_email = payload.email.strip().lower()
+    existing_user = db.query(DBUser).filter(DBUser.email.ilike(clean_email)).first()
     if existing_user:
         return {"status": "error", "message": "Email is already registered"}
     
+    clean_phone = (payload.phone or "").strip() or "+91 98765 43210"
+    clean_location = (payload.location or "").strip() or "Ludhiana, Punjab"
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     new_user = DBUser(
-        name=payload.name, 
-        email=payload.email, 
+        name=payload.name.strip(), 
+        email=clean_email, 
         password=payload.password, 
-        role=payload.role.lower(),
-        phone=payload.phone or "",
-        location=payload.location or "Local Mandi"
+        role=payload.role.strip().lower(),
+        phone=clean_phone,
+        location=clean_location,
+        created_at=now_str
     )
     db.add(new_user)
     db.commit()
@@ -607,15 +674,37 @@ def register_user(payload: UserRegister, db: Session = Depends(get_db)):
             "email": new_user.email,
             "role": new_user.role,
             "phone": new_user.phone,
-            "location": new_user.location
+            "location": new_user.location,
+            "created_at": new_user.created_at
         }
     }
 
 @app.post("/api/login")
 def login_user(payload: UserLogin, db: Session = Depends(get_db)):
-    user = db.query(DBUser).filter(DBUser.email == payload.email, DBUser.password == payload.password).first()
+    clean_email = payload.email.strip().lower()
+    user = db.query(DBUser).filter(DBUser.email.ilike(clean_email), DBUser.password == payload.password).first()
     if not user:
         raise HTTPException(status_code=400, detail="Invalid email or password")
+    
+    # Auto-repair any missing fields in Supabase
+    updated = False
+    if not user.phone:
+        user.phone = "+91 98765 43210"
+        updated = True
+    if not user.location:
+        user.location = "Ludhiana, Punjab" if user.role == "farmer" else "New Delhi"
+        updated = True
+    if not user.created_at:
+        user.created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        updated = True
+    if updated:
+        try:
+            db.commit()
+            db.refresh(user)
+        except Exception as e:
+            db.rollback()
+            print("[WARNING] Could not auto-update user profile in DB:", e)
+
     return {
         "status": "success",
         "message": "Login successful",
@@ -625,14 +714,23 @@ def login_user(payload: UserLogin, db: Session = Depends(get_db)):
             "email": user.email,
             "role": user.role,
             "phone": user.phone,
-            "location": user.location
+            "location": user.location,
+            "created_at": user.created_at
         }
     }
 
 @app.get("/api/users")
 def get_users(db: Session = Depends(get_db)):
     users = db.query(DBUser).all()
-    return [{"id": u.id, "name": u.name, "email": u.email, "role": u.role, "location": u.location} for u in users]
+    return [{
+        "id": u.id, 
+        "name": u.name, 
+        "email": u.email, 
+        "role": u.role, 
+        "phone": u.phone or "+91 98765 43210", 
+        "location": u.location or "Ludhiana, Punjab",
+        "created_at": u.created_at or datetime.now().strftime("%Y-%m-%d")
+    } for u in users]
 
 # --- AI MANDI PRICING & DEMAND FORECASTER ---
 MANDI_DATA = {
@@ -659,11 +757,11 @@ def forecast_demand(data: DemandRequest):
             return {
                 "crop": crop_key.capitalize(),
                 "location": data.location or "Local Mandi",
-                "mandi_status": "🟢 Live AGMARKNET API Connected",
-                "current_mandi_price": f"₹{api_data.get('price', 25)}/kg",
+                "mandi_status": "[AGMARKNET Live] API Connected",
+                "current_mandi_price": f"Rs. {api_data.get('price', 25)}/kg",
                 "predicted_demand": f"{api_data.get('demand', 85)}%",
                 "market_season": "Live Market Sync",
-                "expected_7day_price": f"₹{round(api_data.get('price', 25) * 1.1, 2)}/kg"
+                "expected_7day_price": f"Rs. {round(api_data.get('price', 25) * 1.1, 2)}/kg"
             }
     except Exception:
         pass
@@ -675,11 +773,11 @@ def forecast_demand(data: DemandRequest):
     return {
         "crop": crop_key.capitalize(),
         "location": data.location or "Local Mandi",
-        "mandi_status": "⚡ Smart Fallback Simulation Active (Offline Safe)",
-        "current_mandi_price": f"₹{current_mandi_price}/kg",
+        "mandi_status": "[Simulation] Smart Fallback Active (Offline Safe)",
+        "current_mandi_price": f"Rs. {current_mandi_price}/kg",
         "predicted_demand": f"{base_info['demand_index']}%",
         "market_season": base_info["season"],
-        "expected_7day_price": f"₹{forecasted_price}/kg"
+        "expected_7day_price": f"Rs. {forecasted_price}/kg"
     }
 
 @app.get("/api/mandi-rates")

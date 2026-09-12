@@ -37,8 +37,22 @@
 <body>
 
     <header>
-        <a href="consumer.html" class="logo">🌾 FarmDirect Secure Checkout</a>
-        <a href="cart.html" style="color: white; text-decoration: none; font-size: 0.9rem;">← Back to Cart</a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <a href="consumer.html" class="logo" data-i18n="checkoutTitle">🌾 FarmDirect Secure Checkout</a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <!-- Multi-Language Selector -->
+            <div class="lang-selector-container">
+                <span class="lang-globe-icon">🌐</span>
+                <select class="lang-selector" onchange="changeLanguage(this.value)" aria-label="Select Language">
+                    <option value="en">English</option>
+                    <option value="hi">हिंदी (Hindi)</option>
+                    <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                    <option value="mr">मराठी (Marathi)</option>
+                </select>
+            </div>
+            <a href="cart.html" style="color: white; text-decoration: none; font-size: 0.9rem;">← Back to Cart</a>
+        </div>
     </header>
 
     <div class="checkout-container">
@@ -136,6 +150,7 @@
         </div>
     </div>
 
+    <script src="script.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             renderCheckoutSummary();
@@ -152,12 +167,35 @@
         });
 
         function getUnifiedCart() {
-            return JSON.parse(localStorage.getItem('cartItems')) || JSON.parse(localStorage.getItem('farmCart')) || [];
+            if (typeof window.getUnifiedCart === 'function' && window.getUnifiedCart !== getUnifiedCart) {
+                return window.getUnifiedCart();
+            }
+            try {
+                let farm = [];
+                let items = [];
+                const rawFarm = localStorage.getItem('farmCart');
+                const rawItems = localStorage.getItem('cartItems');
+                if (rawFarm) {
+                    try { const p = JSON.parse(rawFarm); if (Array.isArray(p)) farm = p; } catch(e) {}
+                }
+                if (rawItems) {
+                    try { const p = JSON.parse(rawItems); if (Array.isArray(p)) items = p; } catch(e) {}
+                }
+                if (farm.length > 0) return farm;
+                if (items.length > 0) return items;
+            } catch (e) {
+                console.error("Checkout cart error:", e);
+            }
+            return [];
         }
 
         function saveUnifiedCart(cart) {
-            localStorage.setItem('cartItems', JSON.stringify(cart));
-            localStorage.setItem('farmCart', JSON.stringify(cart));
+            try {
+                const safe = Array.isArray(cart) ? cart : [];
+                localStorage.setItem('cartItems', JSON.stringify(safe));
+                localStorage.setItem('farmCart', JSON.stringify(safe));
+            } catch(e) {}
+            if (typeof updateCartBadge === 'function') updateCartBadge();
         }
 
         function renderCheckoutSummary() {
@@ -252,6 +290,7 @@
                     document.getElementById('successModal').style.display = 'flex';
                     localStorage.removeItem('cartItems');
                     localStorage.removeItem('farmCart');
+                    try { fetch('/api/cart/clear', { method: 'DELETE' }).catch(() => {}); } catch(e) {}
                 } else {
                     alert("Order creation response: " + (data.detail || data.message || "Please check details."));
                 }
@@ -262,6 +301,7 @@
                 document.getElementById('successModal').style.display = 'flex';
                 localStorage.removeItem('cartItems');
                 localStorage.removeItem('farmCart');
+                try { fetch('/api/cart/clear', { method: 'DELETE' }).catch(() => {}); } catch(e) {}
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerText = "Pay & Place Direct Order";
